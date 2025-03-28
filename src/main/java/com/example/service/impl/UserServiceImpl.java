@@ -1,8 +1,8 @@
 package com.example.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.example.entity.User;
-import com.example.mapper.UserMapper;
+import com.example.dal.entity.User;
+import com.example.dal.mapper.UserMapper;
 import com.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,4 +31,15 @@ public class UserServiceImpl implements UserService {
                 .eq("password", password);
         return userMapper.selectOne(queryWrapper);
     }
+
+    @Override
+    public User getUserById(Integer id) {
+        return null;
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        return userMapper.getUserByUsername(username);
+    }
+
 }

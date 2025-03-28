@@ -1,18 +1,17 @@
-package com.example.controller;
+package com.example.web.controller;
 
 import com.example.common.Response;
 import com.example.common.ResponseCode;
-import com.example.entity.User;
+import com.example.common.annotation.WebLog;
+import com.example.dal.entity.User;
 import com.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @ResponseBody
+@RequestMapping("/public")
 public class UserController {
 
     @Autowired
@@ -28,6 +27,7 @@ public class UserController {
         return Response.success("register");
     }
 
+    @WebLog("用户注册接口")
     @PostMapping("/register")
     @ResponseBody
     public Response register(@RequestBody User user) {
