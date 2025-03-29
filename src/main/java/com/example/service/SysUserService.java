@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class SysUserService {
@@ -24,6 +25,15 @@ public class SysUserService {
         //return Optional.ofNullable(getOne(queryWrapper));
         SysUser sysUser = sysUserMapper.getByUsername(username);
         return Optional.ofNullable(sysUser);
+    }
+
+    /**
+     * 根据用户名获取角色编码
+     *
+     * @return .
+     */
+    public Set<String> allRoleCode() {
+        return sysUserMapper.allRoleCode();
     }
 
 }

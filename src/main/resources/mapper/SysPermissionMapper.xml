@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- UserMapper.xml -->
+<mapper namespace="com.example.dal.mapper.SysPermissionMapper">
+    <sql id="field_list">
+        p.id,
+        p.parent_id,
+        p.path,
+        p.name,
+        p.title,
+        p.icon,
+        p.show_link,
+        p.`rank`,
+        p.component,
+        p.show_parent,
+        p.keep_alive,
+        p.is_frame,
+        p.menu_type,
+        p.perms,
+        p.is_enable,
+        p.created,
+        p.created_by,
+        p.modified,
+        p.modified_by
+    </sql>
+    <!--查询权限-->
+    <select id="listPermission"
+            resultType="com.example.dal.entity.SysPermission">
+        SELECT
+        <include refid="field_list"/>
+        FROM sys_permission p
+        WHERE p.menu_type=2
+        <if test="ids != null and ids.size > 0">
+            AND p.id in
+            <foreach collection="ids" item="item" index="index" separator="," open="(" close=")">
+                ${item}
+            </foreach>
+        </if>
+        <choose>
+            <when test="is_enabled != null and is_enabled">
+                AND p.is_enable = 1
+            </when>
+            <when test="is_enabled != null and !is_enabled">
+                AND p.is_enable = 0
+            </when>
+        </choose>
+    </select>
+</mapper>

@@ -18,6 +18,7 @@ public class UserDTO implements UserDetails {
     private String username;
     private String password; // 新增密码字段
     private List<String> roles; // 新增角色列表
+    private List<String> permissions; // 新增权限列表
     private boolean accountNonExpired;
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;

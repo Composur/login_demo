@@ -2,7 +2,7 @@ package com.example.common;
 
 public final class ResponseCode {
     // 成功状态码
-    public static final int SUCCESS = 1000;
+    public static final int SUCCESS = 200;
 
     // 客户端错误状态码
     public static final int BAD_REQUEST = 40000;

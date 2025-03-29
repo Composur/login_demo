@@ -1,11 +1,13 @@
 package com.example.web.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.example.common.Response;
 import com.example.common.annotation.WebLog;
 import com.example.common.util.RsaUtil;
 import com.example.security.SecurityProperties;
 import com.example.service.dto.UserDTO;
 import com.example.web.req.LoginReq;
+import com.example.web.resp.LoginResp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,7 +41,8 @@ public class AuthController {
         }
         assert authentication != null;
         UserDTO userInfo = (UserDTO) authentication.getPrincipal();
+        LoginResp response = BeanUtil.toBean(userInfo, LoginResp.class);
         // 处理登录逻辑
-        return Response.success(userInfo);
+        return Response.success(response);
     }
 }
