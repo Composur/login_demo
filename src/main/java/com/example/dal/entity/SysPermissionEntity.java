@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @ToString
-public class SysPermission extends BaseEntity {
+public class SysPermissionEntity extends BaseEntity {
     /**
      * 父类
      */

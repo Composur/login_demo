@@ -1,6 +1,6 @@
 package com.example.service;
 
-import com.example.dal.entity.SysUser;
+import com.example.dal.entity.SysUserEntity;
 import com.example.dal.mapper.SysUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,11 +19,11 @@ public class SysUserService {
      * @param username 用户名
      * @return .
      */
-    public Optional<SysUser> loadUserByUsername(String username) {
+    public Optional<SysUserEntity> loadUserByUsername(String username) {
         //LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
         //        .eq(SysUser::getUsername, username);
         //return Optional.ofNullable(getOne(queryWrapper));
-        SysUser sysUser = sysUserMapper.getByUsername(username);
+        SysUserEntity sysUser = sysUserMapper.getByUsername(username);
         return Optional.ofNullable(sysUser);
     }
 

@@ -1,6 +1,6 @@
 package com.example.service.impl;
 
-import com.example.dal.entity.SysUser;
+import com.example.dal.entity.SysUserEntity;
 import com.example.service.SysPermissionService;
 import com.example.service.SysUserService;
 import com.example.service.UserService;
@@ -22,8 +22,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        Optional<SysUser> userOptional = sysUserService.loadUserByUsername(username);
-        SysUser user = userOptional.orElseThrow(() -> new UsernameNotFoundException("根据用户名未找到用户信息"));
+        Optional<SysUserEntity> userOptional = sysUserService.loadUserByUsername(username);
+        SysUserEntity user = userOptional.orElseThrow(() -> new UsernameNotFoundException("根据用户名未找到用户信息"));
         // 查询权限
         // 角色code
         Set<String> roleCodes;

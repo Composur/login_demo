@@ -9,7 +9,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString
 @TableName
-public class SysUser extends BaseEntity {
+public class SysUserEntity extends BaseEntity {
     /**
      * 用户名
      */
