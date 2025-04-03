@@ -30,4 +30,5 @@ public class JwtTokenRedisCacheProvider implements TokenProvider {
         //cache.set(key, json, properties.getTokenValidity());
         return _jwtToken;
     }
+
 }

@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable() // 禁用表单登录
                 .httpBasic().disable() // 禁用HTTP基本认证
                 .authorizeRequests()
-                .antMatchers("/auth/login", "/public/**").permitAll() // 允许登录接口无需鉴权
+                .antMatchers("/auth/**", "/public/**").permitAll() // 允许登录接口无需鉴权
                 //.antMatchers(HttpMethod.OPTIONS, "/**").permitAll() // options 开放
                 .anyRequest().authenticated() // 其余认证访问
                 .and()

@@ -3,13 +3,17 @@ package com.example.web.controller;
 import cn.hutool.core.bean.BeanUtil;
 import com.example.common.Response;
 import com.example.common.annotation.WebLog;
+import com.example.common.util.JwtUtil;
 import com.example.common.util.RsaUtil;
+import com.example.event.LogoutEvent;
 import com.example.security.SecurityProperties;
 import com.example.security.token.JwtTokenRedisCacheProvider;
+import com.example.security.utils.SecurityUtil;
 import com.example.service.dto.UserDTO;
 import com.example.web.req.LoginReq;
 import com.example.web.resp.LoginResp;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -26,6 +32,8 @@ public class AuthController {
     private final SecurityProperties securityProperties;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenRedisCacheProvider jwtTokenRedisCacheProvider;
+    private final ApplicationContext applicationContext;
+
 
     @WebLog("用户登录接口")
     @PostMapping("/login")
@@ -60,5 +68,20 @@ public class AuthController {
 
         // 6. 返回成功响应 - 包含用户信息、JWT Token和200状态码
         return Response.success(response);
+    }
+
+    @WebLog("用户登出接口")
+    @PostMapping("/logout")
+    public Response logout(HttpServletRequest request) {
+        String token = JwtUtil.getTokenByRequest(request);
+        if (token != null) {
+            try {
+                UserDTO userDTO = SecurityUtil.getCurrentUser();
+                applicationContext.publishEvent(new LogoutEvent(this, userDTO.getUsername(), userDTO.getId(), token));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return Response.success("success");
     }
 }
