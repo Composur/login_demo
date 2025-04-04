@@ -13,6 +13,7 @@ import com.example.service.dto.UserDTO;
 import com.example.web.req.LoginReq;
 import com.example.web.resp.LoginResp;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
     private final SecurityProperties securityProperties;
     private final AuthenticationManager authenticationManager;
@@ -73,15 +75,23 @@ public class AuthController {
     @WebLog("用户登出接口")
     @PostMapping("/logout")
     public Response logout(HttpServletRequest request) {
-        String token = JwtUtil.getTokenByRequest(request);
-        if (token != null) {
+        String _jwtToken = JwtUtil.getTokenByRequest(request);
+        if (_jwtToken != null) {
             try {
-                UserDTO userDTO = SecurityUtil.getCurrentUser();
-                applicationContext.publishEvent(new LogoutEvent(this, userDTO.getUsername(), userDTO.getId(), token));
+                Object principal = SecurityUtil.getCurrentUser();
+                if (principal instanceof UserDTO) {
+                    UserDTO userDTO = (UserDTO) principal;
+                    applicationContext.publishEvent(new LogoutEvent(this, _jwtToken, userDTO.getUsername(), userDTO.getId()));
+                } else {
+                    log.warn("当前用户主体不是UserDTO类型: {}", principal.getClass().getName());
+                    return Response.error(500, "用户信息格式错误", null);
+                }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("登出时获取用户信息失败: {}", e.getMessage());
+                return Response.error(500, "登出时发生错误", null);
             }
         }
+        jwtTokenRedisCacheProvider.removeToken(_jwtToken);
         return Response.success("success");
     }
 }

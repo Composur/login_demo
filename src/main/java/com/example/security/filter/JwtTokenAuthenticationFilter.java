@@ -3,8 +3,12 @@ package com.example.security.filter;
 import cn.hutool.core.util.StrUtil;
 import com.example.common.util.JwtUtil;
 import com.example.security.SecurityProperties;
+import com.example.security.token.JwtTokenRedisCacheProvider;
+import com.example.security.token.UserCacheProvider;
 import com.example.service.impl.UserDetailServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +31,8 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserDetailServiceImpl userDetailService;
     private final SecurityProperties securityProperties;
+    private final JwtTokenRedisCacheProvider jwtTokenRedisCacheProvider;
+    private final UserCacheProvider userCacheProvider;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -40,7 +46,6 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
                 if (username != null) {
                     // 3. 加载用户详细信息
                     UserDetails userDetails = userDetailService.loadUserByUsername(username);
-
                     // 4. 验证 JWT 令牌的签名和过期时间
                     if (userDetails != null && JwtUtil.verify(_jwtToken, username, securityProperties.getJwt().getJwtSecret())) {
                         // 5. 如果用户详细信息不为空且安全上下文为空，则设置认证信息
@@ -57,14 +62,24 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
                             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                         }
                     } else {
-                        // JWT 令牌验证失败
-                        System.out.println("JWT 令牌验证失败: 签名或过期时间无效");
+                        userCacheProvider.clearUser(JwtUtil.getUsername(_jwtToken));
+                        if (!JwtUtil.verify(_jwtToken, username, securityProperties.getJwt().getJwtSecret())) {
+                            request.setAttribute("JWT_EXPIRED", true); // 标记为过期
+                        }
+                        // ↓
+                        // Spring Security捕获异常后
+                        // ↓
+                        // 调用JwtAuthenticationEntryPoint.commence()方法
+                        throw new AuthenticationCredentialsNotFoundException("无效的JWT令牌");
                     }
                 }
             } catch (Exception e) {
-                // 处理 JWT 验证失败的情况
-                // 例如，记录日志或返回错误响应
-                System.out.println("JWT 验证失败: {}" + e.getMessage());
+                SecurityContextHolder.clearContext();
+                //if (e instanceof JwtException) {
+                //    throw new AuthenticationCredentialsNotFoundException("Token无效", e);
+                //} else {
+                throw new InsufficientAuthenticationException("认证失败", e);
+                //}
             }
         }
         // 6. 继续过滤链

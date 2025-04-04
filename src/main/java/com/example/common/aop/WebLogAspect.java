@@ -5,11 +5,11 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -32,7 +32,7 @@ public class WebLogAspect {
         HttpServletRequest request = attributes.getRequest();
         String uri = request.getRequestURI();
         String method = request.getMethod();
-        String params = JSON.toJSONString(request.getParameterMap()); // 查询参数
+        String params = safeToString(request.getParameterMap()); // 查询参数
 
         // 获取方法参数
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();

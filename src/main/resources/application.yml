@@ -21,6 +21,12 @@ mybatis-plus:
     map-underscore-to-camel-case: true
 
 
+login:
+  demo:
+    cache:
+      prefix: login:demo:cache
+    refresh-routes: true
+
 security:
   jwt:
     # token有效时间 2小时

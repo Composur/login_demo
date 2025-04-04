@@ -2,6 +2,7 @@ package com.example.config;
 
 import com.example.common.util.PasswordUtil;
 import com.example.security.filter.JwtTokenAuthenticationFilter;
+import com.example.security.handler.JwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,15 +26,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CorsFilter corsFilter;
     private final JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter;
     //private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
-    //private final TokenAuthenticationEntryPoint authenticationEntryPoint;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable() // 禁用CSRF保护（根据需要调整）
+                .csrf().disable()
                 .exceptionHandling()
-                //.authenticationEntryPoint(authenticationEntryPoint) // 认证异常处理
-                //.accessDeniedHandler(tokenAccessDeniedHandler) // 授权异常处理
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint) // 使用自定义认证入口点
                 .and()
                 .userDetailsService(userDetailsService)
                 .headers()

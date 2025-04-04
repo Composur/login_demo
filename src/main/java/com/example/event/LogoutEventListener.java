@@ -1,21 +1,24 @@
 package com.example.event;
 
-import com.example.security.token.JwtTokenRedisCacheProvider;
+import com.example.security.token.UserCacheProvider;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class LogoutEventListener {
-
-    private final JwtTokenRedisCacheProvider jwtTokenRedisCacheProvider;
+    private final UserCacheProvider userCacheProvider;
 
     @EventListener
     public void handleLogoutEvent(LogoutEvent event) {
+        log.info("【用户注销事件】用户注销清理缓存信息>>>>>>>>>>>开始");
         String username = event.getUsername();
-        String token = event.getToken();
-        System.out.println("用户注销了");
-        //jwtTokenRedisCacheProvider.invalidateToken(username, token);
+        userCacheProvider.clearUser(username);
+        log.info("【用户注销事件】成功清理缓存登录用户信息");
+        //routeCache.removeCache(event.getUserid());
+        log.info("【用户注销事件】成功清理缓存用户路由信息");
     }
 }
