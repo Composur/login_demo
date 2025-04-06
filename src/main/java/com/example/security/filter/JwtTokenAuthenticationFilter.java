@@ -75,11 +75,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
                 }
             } catch (Exception e) {
                 SecurityContextHolder.clearContext();
-                //if (e instanceof JwtException) {
-                //    throw new AuthenticationCredentialsNotFoundException("Token无效", e);
-                //} else {
                 throw new InsufficientAuthenticationException("认证失败", e);
-                //}
             }
         }
         // 6. 继续过滤链

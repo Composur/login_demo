@@ -14,8 +14,8 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Slf4j
 @AllArgsConstructor
-public class AppCache {
-    private final AppCacheProperties appCacheProperties;
+public class RedisCacheManager {
+    private final RedisCacheProperties appCacheProperties;
     private final StringRedisTemplate redisTemplate;
 
 

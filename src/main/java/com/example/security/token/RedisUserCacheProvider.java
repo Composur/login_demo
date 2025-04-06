@@ -1,8 +1,8 @@
 package com.example.security.token;
 
-import com.example.config.cache.AppCache;
 import com.example.config.cache.CacheUtil;
 import com.example.config.cache.KeyValue;
+import com.example.config.cache.RedisCacheManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class RedisUserCacheProvider implements UserCacheProvider, CacheUtil {
 
     @Autowired
-    private final AppCache cache;
+    private final RedisCacheManager cache;
 
     @Override
     public boolean clearUser(String key) {

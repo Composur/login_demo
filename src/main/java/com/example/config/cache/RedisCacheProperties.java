@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "login.demo")
-public class AppCacheProperties {
+public class RedisCacheProperties {
     /**
      * 缓存
      */

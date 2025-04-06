@@ -1,9 +1,9 @@
 package com.example.security.token;
 
 import com.example.common.util.JwtUtil;
-import com.example.config.cache.AppCache;
 import com.example.config.cache.CacheUtil;
 import com.example.config.cache.KeyValue;
+import com.example.config.cache.RedisCacheManager;
 import com.example.security.SecurityProperties;
 import com.example.service.dto.UserDTO;
 import com.example.web.req.LoginReq;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class JwtTokenRedisCacheProvider implements TokenProvider, CacheUtil {
 
     @Autowired
-    private final AppCache cache;
+    private final RedisCacheManager cache;
 
     @Autowired
     private final SecurityProperties securityProperties;
