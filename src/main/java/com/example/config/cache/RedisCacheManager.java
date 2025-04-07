@@ -40,8 +40,7 @@ public class RedisCacheManager {
      */
     public boolean del(final String key) {
         String _key = normaliz(key);
-        return true;
-        //return Boolean.TRUE.equals(this.redisTemplate.delete(_key));
+        return Boolean.TRUE.equals(this.redisTemplate.delete(_key));
     }
 
 
