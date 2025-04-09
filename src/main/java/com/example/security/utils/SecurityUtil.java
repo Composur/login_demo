@@ -17,6 +17,9 @@ public class SecurityUtil {
      */
     public UserDTO getCurrentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
+        // 通常 UserDetails 对象应该存储在 Authentication 的 principal 中，而不是 credentials 中
+        // 如果您的认证流程确实将 UserDTO 存储在 credentials 中，那么这样是正确的
+        // 否则应该使用 getPrincipal()
         return (UserDTO) context.getAuthentication()
                 .getCredentials();
     }

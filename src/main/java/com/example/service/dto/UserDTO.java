@@ -23,6 +23,7 @@ public class UserDTO implements UserDetails {
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
     private boolean enabled;
+    private boolean isManger;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -43,6 +43,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
         userDTO.setPassword(user.getPassword());
         userDTO.setRoles(new ArrayList<>(roleCodes));
         userDTO.setPermissions(new ArrayList<>(preCodes));
+        // 设置 isManger 字段
+        userDTO.setManger(user.isManager());
         return userDTO;
     }
 }

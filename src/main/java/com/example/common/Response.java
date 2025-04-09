@@ -23,8 +23,8 @@ public class Response<T> {
     private List<Error> errors;
 
     // 成功时的构造方法
-    public static <T> Response<T> success(T data) {
-        return new Response<>(true, ResponseCode.SUCCESS, "成功", data, null);
+    public static <T> Response<T> success(T result) {
+        return new Response<>(true, ResponseCode.SUCCESS, "成功", result, null);
     }
 
     // 无数据的成功（如删除操作）
