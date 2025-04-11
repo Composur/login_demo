@@ -16,10 +16,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class JwtTokenRedisCacheProvider implements TokenProvider, CacheUtil {
 
-    @Autowired
     private final RedisCacheManager cache;
 
-    @Autowired
     private final SecurityProperties securityProperties;
 
     @Override

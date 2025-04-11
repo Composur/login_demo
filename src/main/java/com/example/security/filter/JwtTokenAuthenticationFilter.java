@@ -44,12 +44,13 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
                 String username = JwtUtil.getUsername(_jwtToken);
 
                 if (username != null) {
-                    // 3. 加载用户详细信息
-                    UserDetails userDetails = userDetailService.loadUserByUsername(username);
-                    // 4. 验证 JWT 令牌的签名和过期时间
-                    if (userDetails != null && JwtUtil.verify(_jwtToken, username, securityProperties.getJwt().getJwtSecret())) {
-                        // 5. 如果用户详细信息不为空且安全上下文为空，则设置认证信息
-                        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                    // 先验证JWT令牌的签名和过期时间
+                    if (JwtUtil.verify(_jwtToken, username, securityProperties.getJwt().getJwtSecret())) {
+                        // 令牌有效，再加载用户详细信息
+                        UserDetails userDetails = userDetailService.loadUserByUsername(username);
+
+                        // 如果用户详细信息不为空且安全上下文为空，则设置认证信息
+                        if (userDetails != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                             UsernamePasswordAuthenticationToken authenticationToken =
                                     new UsernamePasswordAuthenticationToken(
                                             userDetails.getUsername(),
@@ -62,20 +63,24 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
                             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                         }
                     } else {
-                        userCacheProvider.clearUser(JwtUtil.getUsername(_jwtToken));
-                        if (!JwtUtil.verify(_jwtToken, username, securityProperties.getJwt().getJwtSecret())) {
-                            request.setAttribute("JWT_EXPIRED", true); // 标记为过期
-                        }
-                        // ↓
-                        // Spring Security捕获异常后
-                        // ↓
-                        // 调用JwtAuthenticationEntryPoint.commence()方法
-                        throw new AuthenticationCredentialsNotFoundException("无效的JWT令牌");
+                        // JWT令牌无效或已过期
+                        userCacheProvider.clearUser(username);
+                        request.setAttribute("JWT_EXPIRED", true); // 标记为过期
+                        throw new AuthenticationCredentialsNotFoundException("登录过期");
                     }
+                } else {
+                    // 用户名无效
+                    userCacheProvider.clearUser(username);
+                    throw new AuthenticationCredentialsNotFoundException("无效的JWT令牌");
                 }
             } catch (Exception e) {
                 SecurityContextHolder.clearContext();
-                throw new InsufficientAuthenticationException("认证失败", e);
+                // 使用更友好的错误消息
+                if (e instanceof AuthenticationCredentialsNotFoundException) {
+                    throw e; // 直接传递JWT无效的异常
+                } else {
+                    throw new InsufficientAuthenticationException("请先登录后再访问", e);
+                }
             }
         }
         // 6. 继续过滤链
