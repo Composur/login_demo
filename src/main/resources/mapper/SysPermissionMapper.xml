@@ -45,4 +45,34 @@
             </when>
         </choose>
     </select>
+
+    <!--查询前端路由权限-->
+    <select id="list" resultType="com.example.dal.entity.SysPermissionEntity">
+        SELECT
+        <include refid="field_list"/>
+        FROM sys_permission p
+        <where>
+            <choose>
+                <when test="is_enabled != null and is_enabled">
+                    p.is_enable = 1
+                </when>
+                <when test="is_enabled != null and !is_enabled">
+                    p.is_enable = 0
+                </when>
+            </choose>
+        </where>
+    </select>
+    <!--前端菜单树 -->
+    <select id="listMenuByIds" resultType="com.example.dal.entity.SysPermissionEntity">
+        SELECT
+        <include refid="field_list"/>
+        FROM sys_permission p
+        WHERE p.menu_type in (0,1)
+        <if test="ids != null and ids.size > 0">
+            AND p.id in
+            <foreach collection="ids" item="item" index="index" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
 </mapper>

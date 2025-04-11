@@ -1,34 +1,56 @@
 package com.example.web.resp;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 
-@Data
-@EqualsAndHashCode
+// Add this annotation to the class
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PermissionRoutesResp {
-    /**
-     * 路由地址
-     */
     private String path;
-    /**
-     * 路由名字（必须保持唯一）
-     */
     private String name;
-    /**
-     * 按需加载需要展示的页面
-     */
     private String component;
-    /**
-     * 路由元信息
-     */
     private VueMenuRouteMeta meta;
-    /**
-     * 菜单
-     */
-    //@JsonInclude(JsonInclude.Include.NON_NULL)
     private List<PermissionRoutesResp> children;
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getComponent() {
+        return component;
+    }
+
+    public void setComponent(String component) {
+        this.component = component;
+    }
+
+    public VueMenuRouteMeta getMeta() {
+        return meta;
+    }
+
+    public void setMeta(VueMenuRouteMeta meta) {
+        this.meta = meta;
+    }
+
+    public List<PermissionRoutesResp> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<PermissionRoutesResp> children) {
+        this.children = children;
+    }
 }
 
 

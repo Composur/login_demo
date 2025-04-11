@@ -1,5 +1,6 @@
 package com.example.web.resp;
 
+import com.fasterxml.jackson.annotation.JsonInclude; // 新增导入
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,6 +14,7 @@ import java.io.Serializable;
  */
 @Data
 @EqualsAndHashCode
+@JsonInclude(JsonInclude.Include.NON_NULL) // 添加注解
 public class VueMenuRouteMeta implements Serializable {
     /**
      * title
