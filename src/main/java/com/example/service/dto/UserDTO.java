@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class UserDTO implements UserDetails {
     private String id;
     private String username;
+    private String nickname;
     private String password; // 新增密码字段
     private List<String> roles; // 新增角色列表
     private List<String> permissions; // 新增权限列表

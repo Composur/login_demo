@@ -2,6 +2,27 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- UserMapper.xml -->
 <mapper namespace="com.example.dal.mapper.SysUserMapper">
+    <sql id="field_list">
+        p.id,
+        p.parent_id,
+        p.path,
+        p.name,
+        p.title,
+        p.icon,
+        p.show_link,
+        p.`rank`,
+        p.component,
+        p.show_parent,
+        p.keep_alive,
+        p.is_frame,
+        p.menu_type,
+        p.perms,
+        p.is_enable,
+        p.created,
+        p.created_by,
+        p.modified,
+        p.modified_by
+    </sql>
     <select id="getByUsername" resultType="com.example.dal.entity.SysUserEntity">
         SELECT * FROM sys_user
         WHERE username = #{username}
@@ -22,4 +43,10 @@
         and t1.user_id = t2.id
         and t2.username = #{username}
     </select>
+    <select id="queryRoleIdsByUserId" resultType="java.lang.String">
+        SELECT ur.role_id
+        FROM sys_user_role ur, sys_role r
+        WHERE 1 = 1 AND ur.role_id = r.id AND r.is_enable = 1 AND ur.user_id = #{userId}
+    </select>
+
 </mapper>

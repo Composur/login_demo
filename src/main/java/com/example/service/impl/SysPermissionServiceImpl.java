@@ -19,12 +19,40 @@ public class SysPermissionServiceImpl implements SysPermissionService {
     @Autowired
     private SysPermissionMapper sysPermissionMapper;
 
+    /**
+     * 获取所有权限编码
+     *
+     * @return 所有权限编码
+     */
     public Set<String> allPermissionCodes() {
         List<SysPermissionEntity> permissions = sysPermissionMapper.listPermission(null, null);
         if (permissions == null) {
             return Collections.emptySet();
         }
         return permissions.stream().map(SysPermissionEntity::getPerms).collect(Collectors.toSet());
+    }
+
+    public Set<String> listPermissionByRoleIds(List<String> ids) {
+        if (ids.isEmpty()) {
+            return Collections.emptySet();
+        }
+        List<SysPermissionEntity> permissions = sysPermissionMapper.listPermission(ids, null);
+        if (permissions != null) {
+            return permissions.stream().map(p -> p.getPerms()).collect(Collectors.toSet());
+        }
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Set<String> listPermissionIdsByRoleIds(List<String> roleIds) {
+        if (roleIds == null || roleIds.isEmpty()) {
+            return Collections.emptySet();
+        }
+        List<SysPermissionEntity> permissions = sysPermissionMapper.listPermissionIdsByRoleIds(roleIds, null);
+        if (permissions != null) {
+            return permissions.stream().map(SysPermissionEntity::getId).collect(Collectors.toSet());
+        }
+        return Collections.emptySet();
     }
 
     @Override

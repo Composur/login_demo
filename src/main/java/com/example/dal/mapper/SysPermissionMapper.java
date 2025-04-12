@@ -11,8 +11,31 @@ import java.util.List;
 
 @Mapper
 public interface SysPermissionMapper extends BaseMapper<SysPermissionEntity> {
+    /**
+     * 查询权限根据ID
+     *
+     * @param ids        权限ID集合
+     * @param is_enabled 是否查询启用
+     * @return 权限集合
+     */
     List<SysPermissionEntity> listPermission(@Param("ids") List<String> ids, @Param("is_enabled") Boolean is_enabled);
 
+    /**
+     * 根据角色ID查询权限
+     *
+     * @param roleIds    角色ID集合
+     * @param is_enabled 是否查询启用
+     * @return 权限集合
+     */
+    List<SysPermissionEntity> listPermissionIdsByRoleIds(@Param("roleIds") List<String> roleIds, @Param("is_enabled") Boolean is_enabled);
+
+    /**
+     * 根据ID查询权限
+     *
+     * @param ids
+     * @param is_enabled
+     * @return
+     */
     List<SysPermissionEntity> list(List<String> ids, Boolean is_enabled);
 
     /**

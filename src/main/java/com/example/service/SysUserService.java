@@ -36,6 +36,9 @@ public class SysUserService {
         return sysUserMapper.getRoleCodeByUsername(username);
     }
 
+    public Set<String> queryRoleIdsByUserId(String id) {
+        return sysUserMapper.queryRoleIdsByUserId(id);
+    }
 
     /**
      * 获取所有角色编码

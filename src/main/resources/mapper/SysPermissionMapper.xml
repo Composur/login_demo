@@ -46,6 +46,25 @@
         </choose>
     </select>
 
+
+    <select id="listPermissionIdsByRoleIds" resultType="com.example.dal.entity.SysPermissionEntity">
+        SELECT
+        <include refid="field_list"/>
+        FROM sys_permission p,sys_role_permission t
+        WHERE t.permission_id = p.id
+        AND t.role_id in
+        <foreach collection="roleIds" item="item" separator="," open="(" close=")">
+            ${item}
+        </foreach>
+        <choose>
+            <when test="is_enabled != null and is_enabled">
+                AND p.is_enable = 1
+            </when>
+            <when test="is_enabled != null and !is_enabled">
+                AND p.is_enable = 0
+            </when>
+        </choose>
+    </select>
     <!--查询前端路由权限-->
     <select id="list" resultType="com.example.dal.entity.SysPermissionEntity">
         SELECT

@@ -9,6 +9,12 @@ public interface SysPermissionService {
 
     Set<String> allPermissionCodes();
 
+    //
+    Set<String> listPermissionByRoleIds(List<String> roleIds);
+
+    // 根据角色id查询权限id
+    Set<String> listPermissionIdsByRoleIds(List<String> roleIds);
+
     Set<String> allPermissionIds();
 
     List<PermissionRoutesResp> queryRouteByIds(List<String> userId);
