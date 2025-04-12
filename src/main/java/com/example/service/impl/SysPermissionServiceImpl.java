@@ -53,6 +53,20 @@ public class SysPermissionServiceImpl implements SysPermissionService {
         return buildRoutesTree(permissions);
     }
 
+    @Override
+    public List<PermissionRoutesResp> queryRouteByUserid(String userId) {
+        if (userId == null) {
+            return Collections.emptyList();
+        }
+        List<SysPermissionEntity> permissions = sysPermissionMapper.listMenuByUserId(userId, true);
+        if (permissions == null || permissions.isEmpty()) {
+            return Collections.emptyList();
+        }
+        // 转换为树形结构
+        return buildRoutesTree(permissions);
+    }
+
+
     /**
      * 构建路由树
      *

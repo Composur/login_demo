@@ -32,6 +32,16 @@ public class SysUserService {
      *
      * @return .
      */
+    public Set<String> getRoleCodeByUsername(String username) {
+        return sysUserMapper.getRoleCodeByUsername(username);
+    }
+
+
+    /**
+     * 获取所有角色编码
+     *
+     * @return .
+     */
     public Set<String> allRoleCode() {
         return sysUserMapper.allRoleCode();
     }

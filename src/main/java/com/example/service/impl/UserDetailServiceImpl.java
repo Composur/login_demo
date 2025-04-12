@@ -11,7 +11,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +37,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
             roleCodes = sysUserService.allRoleCode();
             preCodes = sysPermissionService.allPermissionCodes();
         } else {
-            roleCodes = new HashSet<>(Arrays.asList("ROLE_USER"));
+            roleCodes = sysUserService.getRoleCodeByUsername(user.getUsername());
             preCodes.add("user:*");
         }
 

@@ -34,7 +34,7 @@ public class SysConfigController {
             Set<String> permissionIds = sysPermissionService.allPermissionIds();
             menuRoute = sysPermissionService.queryRouteByIds(new ArrayList<>(permissionIds));
         } else {
-            //menuRoute = sysPermissionService.queryRouteByUserid(user.getUserid());
+            menuRoute = sysPermissionService.queryRouteByUserid(user.getId());
         }
         //routeCache.putCache(user.getUserid(), menuRoute);
         List list = Collections.emptyList();

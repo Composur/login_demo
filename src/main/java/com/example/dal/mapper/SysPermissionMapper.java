@@ -25,4 +25,13 @@ public interface SysPermissionMapper extends BaseMapper<SysPermissionEntity> {
     @Nullable
     List<SysPermissionEntity> listMenuByIds(@Nullable @Param("ids") List<String> ids,
                                             @Nullable @Param("is_enabled") Boolean isEnabled);
+
+    /**
+     * 根据用户ID查询菜单
+     *
+     * @param userId     用户ID
+     * @param is_enabled 是否查询启用
+     * @return 菜单集合
+     */
+    List<SysPermissionEntity> listMenuByUserId(@Param("userId") String userId, @Param("is_enabled") Boolean is_enabled);
 }

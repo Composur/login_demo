@@ -12,10 +12,14 @@
         FROM sys_role a
         WHERE a.is_enable=1
     </select>
-    <!--    <select id="getByUsername" resultType="com.hb0730.boot.admin.modules.sys.system.model.entity.SysUser">-->
-    <!--        SELECT-->
-    <!--        <include refid="Base_sql"/>-->
-    <!--        FROM `sys_user` t-->
-    <!--        WHERE t.username = #{username}-->
-    <!--    </select>-->
+    <select id="getRoleCodeByUsername" resultType="java.lang.String">
+        select t.role_code
+        from sys_role t,
+        sys_user_role t1,
+        sys_user t2
+        where t.id = t1.role_id
+        AND t.is_enable = 1
+        and t1.user_id = t2.id
+        and t2.username = #{username}
+    </select>
 </mapper>

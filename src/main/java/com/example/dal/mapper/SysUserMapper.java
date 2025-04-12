@@ -22,5 +22,13 @@ public interface SysUserMapper extends BaseMapper<SysUserEntity> {
      *
      * @return .
      */
+    Set<String> getRoleCodeByUsername(@Param("username") String username);
+
+
+    /**
+     * 获取所有角色编码
+     *
+     * @return .
+     */
     Set<String> allRoleCode();
 }

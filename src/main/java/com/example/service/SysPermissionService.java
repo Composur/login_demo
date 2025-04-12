@@ -12,4 +12,6 @@ public interface SysPermissionService {
     Set<String> allPermissionIds();
 
     List<PermissionRoutesResp> queryRouteByIds(List<String> userId);
+
+    List<PermissionRoutesResp> queryRouteByUserid(String userId);
 }
