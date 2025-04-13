@@ -37,6 +37,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
             // 权限集合
             preCodes = sysPermissionService.allPermissionCodes();
         } else {
+            // 查询用户拥有的
             roleCodes = sysUserService.getRoleCodeByUsername(user.getUsername());
             // 用户信息ID 获取 用户角色ID集合
             Set<String> roleIds = sysUserService.queryRoleIdsByUserId(user.getId());
@@ -49,6 +50,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         }
 
         UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
         userDTO.setNickname(user.getNickname());
         userDTO.setUsername(user.getUsername());
         userDTO.setPassword(user.getPassword());
