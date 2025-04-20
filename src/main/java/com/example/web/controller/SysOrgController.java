@@ -19,10 +19,12 @@ public class SysOrgController {
     @Autowired
     private final SysOrgService sysOrgService;
 
+    // 获取机构列表
     @GetMapping("/query/list")
     public Response queryOrgList(@RequestParam String isEnable) {
         System.out.println(isEnable);
         List<OrgListItemDTO> orgList = sysOrgService.getOrgList();
         return Response.success(orgList);
     }
+
 }

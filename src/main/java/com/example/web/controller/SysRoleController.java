@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @AllArgsConstructor
 @RequestMapping("sys/role")
-public class SysController {
+public class SysRoleController {
 
     @Autowired
     private final SysRoleService sysRoleService;

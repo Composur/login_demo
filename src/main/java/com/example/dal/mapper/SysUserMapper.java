@@ -5,6 +5,7 @@ import com.example.dal.entity.SysUserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Set;
 
 @Mapper
@@ -37,4 +38,11 @@ public interface SysUserMapper extends BaseMapper<SysUserEntity> {
      * @return .
      */
     Set<String> allRoleCode();
+
+    /**
+     * 获取所有用户信息
+     *
+     * @return .
+     */
+    List<SysUserEntity> selectList();
 }
