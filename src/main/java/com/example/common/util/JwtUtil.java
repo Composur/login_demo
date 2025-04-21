@@ -19,7 +19,7 @@ public class JwtUtil {
     /**
      * 过期时间（毫秒）：Token过期时间30分钟（用户登录过期时间是此时间的两倍，以token在reids缓存时间为准）
      */
-    public static final long EXPIRE_TIME = 30 * 60 * 1000;
+    public static final long EXPIRE_TIME = 120 * 60 * 1000;
 
     private static final String X_ACCESS_TOKEN = "X-Access-Token";
 
@@ -78,10 +78,14 @@ public class JwtUtil {
      * @return 加密的token
      */
     public static String sign(String username, String secret) {
-        Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
+        Date date = new Date(System.currentTimeMillis() + getExpireTime());
         Algorithm algorithm = Algorithm.HMAC256(secret);
         // 附带username信息
         return JWT.create().withClaim("username", username).withExpiresAt(date).sign(algorithm);
+    }
+
+    private static long getExpireTime() {
+        return EXPIRE_TIME;
     }
 
 
