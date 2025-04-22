@@ -4,6 +4,7 @@ import com.example.common.Response;
 import com.example.service.SysUserService;
 import com.example.service.dto.UserDTO;
 import com.example.web.mapper.UserTransfer;
+import com.example.web.resp.PageResult;
 import com.example.web.resp.SysUserResp;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +20,7 @@ public class SysUserController {
     private final SysUserService sysUserService;
 
     @GetMapping("/query/page")
-    public Response<List<SysUserResp>> queryList() {
+    public Response<PageResult<SysUserResp>> queryList() {
         List<UserDTO> list = sysUserService.queryUserList();
         // 将 SysUserResp 的创建移到 map 操作内部
         //List<SysUserResp> sysUserResps = list.stream().map(userDTO -> {
@@ -32,6 +33,7 @@ public class SysUserController {
         //    return UserTransfer.INSTANCE.toSysUserResp(userDTO);
         //}).collect(Collectors.toList());
         List<SysUserResp> sysUserResps = UserTransfer.INSTANCE.toSysUserRespList(list);
-        return Response.success(sysUserResps);
+        PageResult<SysUserResp> pageResult = new PageResult<>(sysUserResps, sysUserResps.size(), 1, 10);
+        return Response.success(pageResult);
     }
 }
