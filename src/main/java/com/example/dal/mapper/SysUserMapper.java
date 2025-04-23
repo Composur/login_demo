@@ -44,5 +44,5 @@ public interface SysUserMapper extends BaseMapper<SysUserEntity> {
      *
      * @return .
      */
-    List<SysUserEntity> selectList();
+    List<SysUserEntity> selectList(@Param("offset") int offset, @Param("size") int limit);
 }

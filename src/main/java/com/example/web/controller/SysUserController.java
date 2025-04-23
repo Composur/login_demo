@@ -9,6 +9,7 @@ import com.example.web.resp.SysUserResp;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -20,8 +21,8 @@ public class SysUserController {
     private final SysUserService sysUserService;
 
     @GetMapping("/query/page")
-    public Response<PageResult<SysUserResp>> queryList() {
-        List<UserDTO> list = sysUserService.queryUserList();
+    public Response<PageResult<SysUserResp>> queryList(@RequestParam int size, @RequestParam int current) {
+        List<UserDTO> list = sysUserService.queryUserList(size, current);
         // 将 SysUserResp 的创建移到 map 操作内部
         //List<SysUserResp> sysUserResps = list.stream().map(userDTO -> {
         //    //SysUserResp sysUserResp = new SysUserResp(); // 在 lambda 内部创建新对象
