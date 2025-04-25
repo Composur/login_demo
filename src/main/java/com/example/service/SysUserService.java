@@ -1,5 +1,7 @@
 package com.example.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.dal.entity.SysUserEntity;
 import com.example.dal.mapper.SysUserMapper;
 import com.example.service.dto.UserDTO;
@@ -7,7 +9,6 @@ import com.example.web.mapper.UserTransfer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -52,32 +53,31 @@ public class SysUserService {
         return sysUserMapper.allRoleCode();
     }
 
-    public List<UserDTO> queryUserList(int size, int current) {
-        // 校验参数 (可选但推荐)
+    // 修改方法，返回 IPage<UserDTO>
+    public IPage<UserDTO> queryUserPage(int size, int current) {
+        // 校验参数
         if (current <= 0) {
-            current = 1; // 默认第一页
+            current = 1;
         }
         if (size <= 0) {
-            size = 10; // 默认每页10条
+            size = 10;
         }
 
-        // 计算 offset (MySQL offset 从 0 开始)
-        int offset = (current - 1) * size;
+        // 1. 创建 MP 的 Page 对象
+        IPage<SysUserEntity> pageRequest = new Page<>(current, size);
 
-        // 调用 Mapper 方法，传递计算好的 offset 和原始的 size (作为 limit)
-        // 注意：需要确保 SysUserMapper 接口中的 selectList 方法参数名与 XML 中的占位符匹配
-        // 可能需要使用 @Param("offset") 和 @Param("limit") 注解
-        List<SysUserEntity> userEntities = sysUserMapper.selectList(offset, size);
+        // 2. 调用 Mapper 方法，传入 Page 对象 (不再需要手动计算 offset)
+        // MP分页插件会自动拦截这个调用，并附加分页SQL以及执行Count查询
+        IPage<SysUserEntity> userEntityPage = sysUserMapper.selectUserPage(pageRequest);
 
-        //return userEntities.stream().map(userEntity -> {
-        //    //UserDTO userDTO = new UserDTO();
-        //    //userDTO.setId(userEntity.getId());
-        //    //userDTO.setUsername(userEntity.getUsername());
-        //    //userDTO.setNickname(userEntity.getNickname());
-        //    //return userDTO;
-        //    return UserTransfer.INSTANCE.toUserDto(userEntity);
-        //}).collect(Collectors.toList());
-        return UserTransfer.INSTANCE.toUserDtoList(userEntities);
+        // 3. 将 IPage<SysUserEntity> 转换为 IPage<UserDTO>
+        IPage<UserDTO> userDtoPage = userEntityPage.convert(entity -> {
+            return UserTransfer.INSTANCE.toUserDto(entity);
+        });
+
+        return userDtoPage;
     }
 
+    // 原来的 queryUserList 方法可以修改或删除
+    // public List<UserDTO> queryUserList(int size, int current) { ... }
 }

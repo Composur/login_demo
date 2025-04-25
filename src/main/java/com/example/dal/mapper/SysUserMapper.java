@@ -1,6 +1,7 @@
 package com.example.dal.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage; // 引入 IPage
 import com.example.dal.entity.SysUserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -40,9 +41,13 @@ public interface SysUserMapper extends BaseMapper<SysUserEntity> {
     Set<String> allRoleCode();
 
     /**
-     * 获取所有用户信息
-     *
-     * @return .
+     * 获取所有用户信息 (使用MP分页插件)
+     * 第一个参数必须是 IPage 类型
+     * @param page 分页参数对象 (包含 current, size)
+     * @return 分页结果对象 (包含 records, total, pages 等)
      */
-    List<SysUserEntity> selectList(@Param("offset") int offset, @Param("size") int limit);
+    IPage<SysUserEntity> selectUserPage(IPage<SysUserEntity> page); // 修改方法签名和名称
+
+    // 原来的 selectList 方法可以删掉或保留用于非分页场景
+    // List<SysUserEntity> selectList(@Param("offset") int offset, @Param("limit") int limit); // 可以删除或注释掉
 }

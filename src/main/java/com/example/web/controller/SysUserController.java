@@ -1,5 +1,6 @@
 package com.example.web.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.common.Response;
 import com.example.service.SysUserService;
 import com.example.service.dto.UserDTO;
@@ -13,28 +14,32 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/sys/user")
 @AllArgsConstructor
 public class SysUserController {
     private final SysUserService sysUserService;
+    //private final UserTransfer userTransfer; // 注入 UserTransfer
 
     @GetMapping("/query/page")
-    public Response<PageResult<SysUserResp>> queryList(@RequestParam int size, @RequestParam int current) {
-        List<UserDTO> list = sysUserService.queryUserList(size, current);
-        // 将 SysUserResp 的创建移到 map 操作内部
-        //List<SysUserResp> sysUserResps = list.stream().map(userDTO -> {
-        //    //SysUserResp sysUserResp = new SysUserResp(); // 在 lambda 内部创建新对象
-        //    //sysUserResp.setId(userDTO.getId());
-        //    //sysUserResp.setUsername(userDTO.getUsername());
-        //    // 如果 SysUserResp 还有其他字段，也需要从 userDTO 映射过来
-        //    // sysUserResp.setNickname(userDTO.getNickname());
-        //    //return sysUserResp;
-        //    return UserTransfer.INSTANCE.toSysUserResp(userDTO);
-        //}).collect(Collectors.toList());
-        List<SysUserResp> sysUserResps = UserTransfer.INSTANCE.toSysUserRespList(list);
-        PageResult<SysUserResp> pageResult = new PageResult<>(sysUserResps, sysUserResps.size(), 1, 10);
+    public Response<PageResult<SysUserResp>> queryPage(@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "1") int current) { // 修改方法名，添加默认值
+        // 调用新的 Service 方法
+        IPage<UserDTO> userDtoPage = sysUserService.queryUserPage(size, current);
+
+        // 将 List<UserDTO> 转换为 List<SysUserResp>
+        List<SysUserResp> sysUserResps = userDtoPage.getRecords().stream()
+                .map(userDTO -> UserTransfer.INSTANCE.toSysUserResp(userDTO)) // 使用注入的 UserTransfer
+                .collect(Collectors.toList());
+
+        // 从 IPage 对象获取正确的分页信息构建 PageResult
+        PageResult<SysUserResp> pageResult = new PageResult<>(
+                sysUserResps,
+                userDtoPage.getTotal(), // 获取总记录数
+                userDtoPage.getCurrent(), // 获取当前页码
+                userDtoPage.getSize()     // 获取每页数量
+        );
         return Response.success(pageResult);
     }
 }

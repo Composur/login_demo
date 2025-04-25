@@ -9,6 +9,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
+//@Mapper(componentModel = "spring")
 @Mapper
 public interface UserTransfer {
     UserTransfer INSTANCE = Mappers.getMapper(UserTransfer.class);
