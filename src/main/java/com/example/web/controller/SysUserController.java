@@ -21,7 +21,12 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class SysUserController {
     private final SysUserService sysUserService;
+
     //private final UserTransfer userTransfer; // 注入 UserTransfer
+    @GetMapping("/check/username")
+    public Response<Boolean> checkUsername(@RequestParam String username) {
+        return Response.success(sysUserService.checkUsername(username));
+    }
 
     @GetMapping("/query/page")
     public Response<PageResult<SysUserResp>> queryPage(@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "1") int current) { // 修改方法名，添加默认值

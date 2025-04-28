@@ -17,6 +17,12 @@ public class SysUserService {
     @Autowired
     private SysUserMapper sysUserMapper;
 
+    public boolean checkUsername(String username) {
+        return true;
+    }
+
+    ;
+
     /**
      * 根据用户名获取用户信息
      *
