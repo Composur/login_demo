@@ -18,7 +18,10 @@ public class SysUserService {
     private SysUserMapper sysUserMapper;
 
     public boolean checkUsername(String username) {
-        return true;
+        // 调用 Mapper 层获取用户数量
+        Integer count = sysUserMapper.checkUsername(username);
+        // 在 Service 层判断数量是否大于 0，返回 boolean 值
+        return count > 0;
     }
 
     ;

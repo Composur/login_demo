@@ -10,7 +10,13 @@ import java.util.Set;
 
 @Mapper
 public interface SysUserMapper extends BaseMapper<SysUserEntity> {
-    boolean checkUsername(@Param("username") String username);
+    /**
+     * 根据用户名查询用户是否存在
+     *
+     * @param username .
+     * @return .
+     */
+    Integer checkUsername(@Param("username") String username); // 修改返回类型为 Integer
 
     /**
      * 根据用户名获取用户信息

@@ -31,6 +31,12 @@
         FROM sys_user_role ur, sys_role r
         WHERE 1 = 1 AND ur.role_id = r.id AND r.is_enable = 1 AND ur.user_id = #{userId}
     </select>
+
+    <!-- 新增 checkUsername 的映射，返回 Integer 类型 -->
+    <select id="checkUsername" resultType="java.lang.Integer">
+        SELECT count(*) FROM sys_user WHERE username = #{username}
+    </select>
+
     <!-- 修改 id 以匹配新的 Mapper 方法名 -->
     <!-- 移除 LIMIT 子句 -->
     <select id="selectUserPage" resultType="com.example.dal.entity.SysUserEntity">
@@ -42,4 +48,4 @@
         <!-- LIMIT 子句由分页插件自动添加，此处需删除 -->
         <!-- LIMIT #{offset}, #{limit} -->
     </select>
-    </mapper>
+</mapper>
