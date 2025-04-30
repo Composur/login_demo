@@ -8,7 +8,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString
-@TableName
+@TableName("sys_user")
 public class SysUserEntity extends BaseEntity {
     /**
      * 用户名

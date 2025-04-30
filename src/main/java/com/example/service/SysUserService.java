@@ -2,10 +2,12 @@ package com.example.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.common.util.PasswordUtil;
 import com.example.dal.entity.SysUserEntity;
 import com.example.dal.mapper.SysUserMapper;
 import com.example.service.dto.UserDTO;
 import com.example.web.mapper.UserTransfer;
+import com.example.web.req.UserSaveReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,23 @@ import java.util.Set;
 public class SysUserService {
     @Autowired
     private SysUserMapper sysUserMapper;
+
+    public boolean save(UserSaveReq req) {
+        // 1. 校验用户名是否已存在
+        // 2. 校验密码和确认密码是否一致
+        // 3. 将 UserSaveReq 转换为 SysUserEntity
+        SysUserEntity sysUser = UserTransfer.INSTANCE.toSysUserEntity(req);
+        // 4. 对密码进行加密
+        sysUser.setPassword(PasswordUtil.encoder(sysUser.getPassword()));
+        // 5. 设置其他必要字段
+        // 6. 调用 Mapper 执行插入操作
+        int insertedRows = sysUserMapper.insert(sysUser);
+        if (insertedRows <= 0) {
+            return false;
+        }
+        //baseMapper.saveUserRole(user.getId(), new HashSet<>(roleIds));
+        return true;
+    }
 
     public boolean checkUsername(String username) {
         // 调用 Mapper 层获取用户数量

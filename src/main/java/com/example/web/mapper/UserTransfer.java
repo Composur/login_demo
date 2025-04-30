@@ -2,6 +2,7 @@ package com.example.web.mapper;
 
 import com.example.dal.entity.SysUserEntity;
 import com.example.service.dto.UserDTO;
+import com.example.web.req.UserSaveReq;
 import com.example.web.resp.LoginResp;
 import com.example.web.resp.SysUserResp;
 import org.mapstruct.Mapper;
@@ -13,6 +14,8 @@ import java.util.List;
 @Mapper
 public interface UserTransfer {
     UserTransfer INSTANCE = Mappers.getMapper(UserTransfer.class);
+
+    SysUserEntity toSysUserEntity(UserSaveReq req);
 
     LoginResp toLoginResp(UserDTO userDTO);
 

@@ -5,13 +5,11 @@ import com.example.common.Response;
 import com.example.service.SysUserService;
 import com.example.service.dto.UserDTO;
 import com.example.web.mapper.UserTransfer;
+import com.example.web.req.UserSaveReq;
 import com.example.web.resp.PageResult;
 import com.example.web.resp.SysUserResp;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +21,13 @@ public class SysUserController {
     private final SysUserService sysUserService;
 
     //private final UserTransfer userTransfer; // 注入 UserTransfer
+
+    @PostMapping("/save")
+    public Response<String> save(@RequestBody UserSaveReq req) {
+        Boolean b = sysUserService.save(req);
+        return Response.success("保存成功");
+    }
+
     @GetMapping("/check/username")
     public Response<Boolean> checkUsername(@RequestParam String username) {
         return Response.success(sysUserService.checkUsername(username));
