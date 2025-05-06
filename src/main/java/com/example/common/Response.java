@@ -37,6 +37,12 @@ public class Response<T> {
         return new Response<>(false, code, message, null, errors);
     }
 
+    // 新增：失败时的构造方法（使用默认错误码，省略 errors）
+    public static Response<?> error(String message) {
+        // 使用默认错误码 10000，errors 传递 null
+        return new Response<>(false, 10000, message, null, null);
+    }
+
     // 私有构造方法，强制使用静态工厂方法
     private Response(Boolean success, int code, String message, T result, List<Error> errors) {
         this.code = code;
