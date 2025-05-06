@@ -10,6 +10,10 @@ import java.util.Set;
 
 @Mapper
 public interface SysUserMapper extends BaseMapper<SysUserEntity> {
+
+    int saveUserRole(@Param("id") String id, @Param("roleIds") Set<String> roleIds);
+
+
     /**
      * 根据用户名查询用户是否存在
      *

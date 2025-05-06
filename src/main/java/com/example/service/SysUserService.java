@@ -1,7 +1,9 @@
 package com.example.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.common.Response;
 import com.example.common.util.PasswordUtil;
 import com.example.dal.entity.SysUserEntity;
 import com.example.dal.mapper.SysUserMapper;
@@ -11,6 +13,8 @@ import com.example.web.req.UserSaveReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -19,9 +23,20 @@ public class SysUserService {
     @Autowired
     private SysUserMapper sysUserMapper;
 
-    public boolean save(UserSaveReq req) {
+
+    /**
+     * 保存用户
+     *
+     * @param req .
+     * @return .
+     */
+    public Response<?> save(UserSaveReq req) {
         // 1. 校验用户名是否已存在
+        boolean checkUsername = this.checkUsername(req.getUsername());
+        if (checkUsername) return Response.error("用户名已经存在");
         // 2. 校验密码和确认密码是否一致
+        if (StrUtil.isNotBlank(req.getPassword()) && !req.getPassword().equals(req.getConfirmPassword()))
+            return Response.error("二次密码不一致");
         // 3. 将 UserSaveReq 转换为 SysUserEntity
         SysUserEntity sysUser = UserTransfer.INSTANCE.toSysUserEntity(req);
         // 4. 对密码进行加密
@@ -30,12 +45,16 @@ public class SysUserService {
         // 6. 调用 Mapper 执行插入操作
         int insertedRows = sysUserMapper.insert(sysUser);
         if (insertedRows <= 0) {
-            return false;
+            return Response.error("保存失败");
         }
-        //baseMapper.saveUserRole(user.getId(), new HashSet<>(roleIds));
-        return true;
+        List<String> roleIds = req.getRoleIds();
+        sysUserMapper.saveUserRole(sysUser.getId(), new HashSet<>(roleIds));
+        return Response.success("保存成功");
     }
 
+    /**
+     * 根据用户名查询用户是否存在
+     **/
     public boolean checkUsername(String username) {
         // 调用 Mapper 层获取用户数量
         Integer count = sysUserMapper.checkUsername(username);

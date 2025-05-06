@@ -23,9 +23,8 @@ public class SysUserController {
     //private final UserTransfer userTransfer; // 注入 UserTransfer
 
     @PostMapping("/save")
-    public Response<String> save(@RequestBody UserSaveReq req) {
-        Boolean b = sysUserService.save(req);
-        return Response.success("保存成功");
+    public Response<?> save(@RequestBody UserSaveReq req) {
+        return sysUserService.save(req);
     }
 
     @GetMapping("/check/username")

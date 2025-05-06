@@ -37,6 +37,14 @@
         SELECT count(*) FROM sys_user WHERE username = #{username}
     </select>
 
+    <insert id="saveUserRole">
+        INSERT INTO sys_user_role (id, user_id, role_id)
+        VALUES
+        <foreach collection="roleIds" item="roleId" separator=",">
+            (md5(uuid()), #{id}, #{roleId})
+        </foreach>
+    </insert>
+
     <!-- 修改 id 以匹配新的 Mapper 方法名 -->
     <!-- 移除 LIMIT 子句 -->
     <select id="selectUserPage" resultType="com.example.dal.entity.SysUserEntity">
