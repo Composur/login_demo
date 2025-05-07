@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -50,5 +51,10 @@ public class SysUserController {
                 userDtoPage.getSize()     // 获取每页数量
         );
         return Response.success(pageResult);
+    }
+
+    @GetMapping("/query/role/ids")
+    public Response<Set<String>> queryRoleIdsByUserId(@RequestParam String id) {
+        return Response.success(sysUserService.queryRoleIdsByUserId(id));
     }
 }

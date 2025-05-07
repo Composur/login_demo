@@ -11,6 +11,13 @@ import java.util.Set;
 @Mapper
 public interface SysUserMapper extends BaseMapper<SysUserEntity> {
 
+    /**
+     * 保存用户角色
+     *
+     * @param id      用户id
+     * @param roleIds 角色id集合
+     * @return .
+     */
     int saveUserRole(@Param("id") String id, @Param("roleIds") Set<String> roleIds);
 
 
@@ -59,7 +66,4 @@ public interface SysUserMapper extends BaseMapper<SysUserEntity> {
      * @return 分页结果对象 (包含 records, total, pages 等)
      */
     IPage<SysUserEntity> selectUserPage(IPage<SysUserEntity> page); // 修改方法签名和名称
-
-    // 原来的 selectList 方法可以删掉或保留用于非分页场景
-    // List<SysUserEntity> selectList(@Param("offset") int offset, @Param("limit") int limit); // 可以删除或注释掉
 }

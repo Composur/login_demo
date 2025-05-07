@@ -86,9 +86,6 @@ public class SysUserService {
         return sysUserMapper.getRoleCodeByUsername(username);
     }
 
-    public Set<String> queryRoleIdsByUserId(String id) {
-        return sysUserMapper.queryRoleIdsByUserId(id);
-    }
 
     /**
      * 获取所有角色编码
@@ -124,6 +121,13 @@ public class SysUserService {
         return userDtoPage;
     }
 
-    // 原来的 queryUserList 方法可以修改或删除
-    // public List<UserDTO> queryUserList(int size, int current) { ... }
+    /**
+     * 根据用户ID查询角色ID列表
+     *
+     * @param id 用户ID
+     * @return 角色ID列表
+     */
+    public Set<String> queryRoleIdsByUserId(String id) {
+        return sysUserMapper.queryRoleIdsByUserId(id);
+    }
 }
