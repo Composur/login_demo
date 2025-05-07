@@ -43,7 +43,7 @@ public class SysUserResp {
      * 用户密码
      */
     //@Schema(description = "用户密码")
-    private String password;
+    //private String password;
     /**
      * 用户昵称
      */

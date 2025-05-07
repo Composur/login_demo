@@ -2,8 +2,8 @@ package com.example.web.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.common.Response;
+import com.example.dal.entity.SysUserEntity;
 import com.example.service.SysUserService;
-import com.example.service.dto.UserDTO;
 import com.example.web.mapper.UserTransfer;
 import com.example.web.req.UserSaveReq;
 import com.example.web.resp.PageResult;
@@ -35,7 +35,7 @@ public class SysUserController {
     @GetMapping("/query/page")
     public Response<PageResult<SysUserResp>> queryPage(@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "1") int current) { // 修改方法名，添加默认值
         // 调用新的 Service 方法
-        IPage<UserDTO> userDtoPage = sysUserService.queryUserPage(size, current);
+        IPage<SysUserEntity> userDtoPage = sysUserService.queryUserPage(size, current);
 
         // 将 List<UserDTO> 转换为 List<SysUserResp>
         List<SysUserResp> sysUserResps = userDtoPage.getRecords().stream()

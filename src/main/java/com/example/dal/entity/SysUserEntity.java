@@ -30,10 +30,20 @@ public class SysUserEntity extends BaseEntity {
      * 是否启用
      */
     private Integer isEnabled;
+
     /**
      * 所属机构
      */
     private String orgId;
+    /**
+     * 机构名称
+     */
+    private String orgName;
+    /**
+     * 机构code
+     */
+    //@Schema(description = "机构code")
+    private String orgCode;
     /**
      * 是否网点管理员
      */

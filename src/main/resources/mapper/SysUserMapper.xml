@@ -49,8 +49,10 @@
     <!-- 移除 LIMIT 子句 -->
     <select id="selectUserPage" resultType="com.example.dal.entity.SysUserEntity">
         select
-        <include refid="Base_sql"/>
+        <include refid="Base_sql"/>,
+        t1.name as org_name,t1.code as org_code
         from sys_user t
+        LEFT JOIN sys_org t1 ON t.org_id = t1.id
         where 1 = 1
         ORDER BY t.created DESC
         <!-- LIMIT 子句由分页插件自动添加，此处需删除 -->

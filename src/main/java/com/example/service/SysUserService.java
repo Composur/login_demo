@@ -7,7 +7,6 @@ import com.example.common.Response;
 import com.example.common.util.PasswordUtil;
 import com.example.dal.entity.SysUserEntity;
 import com.example.dal.mapper.SysUserMapper;
-import com.example.service.dto.UserDTO;
 import com.example.web.mapper.UserTransfer;
 import com.example.web.req.UserSaveReq;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +100,7 @@ public class SysUserService {
     }
 
     // 修改方法，返回 IPage<UserDTO>
-    public IPage<UserDTO> queryUserPage(int size, int current) {
+    public IPage<SysUserEntity> queryUserPage(int size, int current) {
         // 校验参数
         if (current <= 0) {
             current = 1;
@@ -118,7 +117,7 @@ public class SysUserService {
         IPage<SysUserEntity> userEntityPage = sysUserMapper.selectUserPage(pageRequest);
 
         // 3. 将 IPage<SysUserEntity> 转换为 IPage<UserDTO>
-        IPage<UserDTO> userDtoPage = userEntityPage.convert(entity -> {
+        IPage<SysUserEntity> userDtoPage = userEntityPage.convert(entity -> {
             return UserTransfer.INSTANCE.toUserDto(entity);
         });
 

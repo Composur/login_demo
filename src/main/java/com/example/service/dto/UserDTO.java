@@ -25,6 +25,10 @@ public class UserDTO implements UserDetails {
     private boolean credentialsNonExpired;
     private boolean enabled;
     private boolean isManger;
+    /**
+     * 所属机构
+     */
+    private String orgId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

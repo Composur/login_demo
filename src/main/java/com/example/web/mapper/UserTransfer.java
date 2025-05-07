@@ -20,13 +20,13 @@ public interface UserTransfer {
     LoginResp toLoginResp(UserDTO userDTO);
 
     // --- Entity <-> DTO ---
-    UserDTO toUserDto(SysUserEntity entity);
+    SysUserEntity toUserDto(SysUserEntity entity);
 
     // 添加 Entity 列表到 DTO 列表的映射方法签名
     List<UserDTO> toUserDtoList(List<SysUserEntity> entities);
 
     // --- DTO -> Resp ---
-    SysUserResp toSysUserResp(UserDTO userDTO);
+    SysUserResp toSysUserResp(SysUserEntity entity);
 
     // 添加 DTO 列表到 Resp 列表的映射方法签名
     List<SysUserResp> toSysUserRespList(List<UserDTO> dtos);
