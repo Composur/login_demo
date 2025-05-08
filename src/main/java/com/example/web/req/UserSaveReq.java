@@ -1,8 +1,12 @@
 package com.example.web.req;
 
-import java.util.List; // 导入 List
+import lombok.Data;
 
+import java.util.List;
+
+@Data
 public class UserSaveReq {
+    private String id;
     private String username;
     private Integer isEnabled; // 对应 JSON 中的 isEnabled
     private List<String> roleIds; // 对应 JSON 中的 roleIds

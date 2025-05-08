@@ -51,6 +51,50 @@ public class SysUserService {
         return Response.success("保存成功");
     }
 
+    public Response<?> update(UserSaveReq req) {
+        // 1. 根据 ID 查询用户
+        SysUserEntity sysUser = null;
+        try {
+            sysUser = sysUserMapper.selectById(req.getId());
+        } catch (Exception e) {
+            // 更具体的异常捕获可能更好，或者让全局异常处理器处理
+            return Response.error("查询用户失败"); // 或者更具体的错误信息
+        }
+        if (sysUser == null) {
+            return Response.error("用户不存在");
+        }
+
+        // 2. 更新用户信息
+        UserTransfer.INSTANCE.updateUserFromReq(req, sysUser); // sysUser 对象现在包含了来自 req 的更新
+
+        // 3. 特殊字段处理 (例如密码加密，如果密码字段在 req 中并且被更新了)
+        if (StrUtil.isNotBlank(req.getPassword())) {
+            if (StrUtil.isBlank(req.getConfirmPassword()) || !req.getPassword().equals(req.getConfirmPassword())) {
+                return Response.error("二次密码不一致");
+            }
+            sysUser.setPassword(PasswordUtil.encoder(req.getPassword()));
+        }
+
+        // 4. 持久化更新到数据库
+        int updatedRows = sysUserMapper.updateById(sysUser); // 使用 sysUser 对象进行更新
+        if (updatedRows <= 0) {
+            // 根据业务逻辑，如果 updatedRows == 0 但没有错误，可能表示没有字段实际变化
+            // 但如果期望至少有一行被更新，则可以视为一个问题
+            return Response.error("更新用户信息失败，可能没有数据被修改或用户不存在");
+        }
+
+        // 5. 更新用户角色关联 (如果需要)
+        // 通常是先删除旧关联，再添加新关联
+        if (req.getRoleIds() != null) { // 只有当请求中明确传来 roleIds 时才更新
+            sysUserMapper.deleteUserRoleByUserId(sysUser.getId()); // 假设您有此方法
+            if (!req.getRoleIds().isEmpty()) {
+                sysUserMapper.saveUserRole(sysUser.getId(), new HashSet<>(req.getRoleIds()));
+            }
+        }
+
+        return Response.success("更新成功"); // 或者 Response.success(true, "更新成功");
+    }
+
     /**
      * 根据用户名查询用户是否存在
      **/

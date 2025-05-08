@@ -6,6 +6,16 @@
         t.id,t.created_by
         ,t.created,t.modified_by,t.modified,t.username,t.password,t.nickname,t.phone,t.is_enabled,t.email,t.org_id,t.is_manage
     </sql>
+    <select id="selectById" resultType="com.example.dal.entity.SysUserEntity">
+        SELECT
+        <include refid="Base_sql"/>
+        FROM sys_user t
+        WHERE t.id = #{id}
+    </select>
+    <delete id="deleteUserRoleByUserId">
+        DELETE FROM sys_user_role
+        WHERE user_id = #{id}
+    </delete>
     <select id="getByUsername" resultType="com.example.dal.entity.SysUserEntity">
         SELECT * FROM sys_user
         WHERE username = #{username}

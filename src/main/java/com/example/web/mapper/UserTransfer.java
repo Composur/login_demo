@@ -5,7 +5,10 @@ import com.example.service.dto.UserDTO;
 import com.example.web.req.UserSaveReq;
 import com.example.web.resp.LoginResp;
 import com.example.web.resp.SysUserResp;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
@@ -16,6 +19,9 @@ public interface UserTransfer {
     UserTransfer INSTANCE = Mappers.getMapper(UserTransfer.class);
 
     SysUserEntity toSysUserEntity(UserSaveReq req);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateUserFromReq(UserSaveReq req, @MappingTarget SysUserEntity entity);
 
     LoginResp toLoginResp(UserDTO userDTO);
 

@@ -10,6 +10,21 @@ import java.util.Set;
 
 @Mapper
 public interface SysUserMapper extends BaseMapper<SysUserEntity> {
+    /**
+     * 根据用户id删除用户角色关系
+     *
+     * @param id .
+     * @return .
+     */
+    int deleteUserRoleByUserId(@Param("id") String id);
+
+    /**
+     * 根据用户id获取用户信息
+     *
+     * @param id .
+     * @return .
+     */
+    SysUserEntity selectById(@Param("id") String id);
 
     /**
      * 保存用户角色
@@ -66,4 +81,6 @@ public interface SysUserMapper extends BaseMapper<SysUserEntity> {
      * @return 分页结果对象 (包含 records, total, pages 等)
      */
     IPage<SysUserEntity> selectUserPage(IPage<SysUserEntity> page); // 修改方法签名和名称
+
+    void update(SysUserEntity sysUserEntity);
 }

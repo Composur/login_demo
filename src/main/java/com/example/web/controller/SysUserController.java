@@ -28,6 +28,11 @@ public class SysUserController {
         return sysUserService.save(req);
     }
 
+    @PutMapping("/update/{id}")
+    public Response<?> update(@PathVariable String id, @RequestBody UserSaveReq req) {
+        return sysUserService.update(req);
+    }
+
     @GetMapping("/check/username")
     public Response<Boolean> checkUsername(@RequestParam String username) {
         return Response.success(sysUserService.checkUsername(username));
