@@ -44,6 +44,9 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
         // 4. 对密码进行加密
         sysUser.setPassword(PasswordUtil.encoder(sysUser.getPassword()));
         // 5. 设置其他必要字段
+        sysUser.setCreatedBy(SecurityUtil.getCurrentUsername());
+        sysUser.setModified(LocalDateTime.now());
+        sysUser.setModifiedBy(SecurityUtil.getCurrentUsername());
         // 6. 调用 Mapper 执行插入操作
         int insertedRows = sysUserMapper.insert(sysUser);
         if (insertedRows <= 0) {
