@@ -7,11 +7,13 @@ import com.example.common.Response;
 import com.example.common.util.PasswordUtil;
 import com.example.dal.entity.SysUserEntity;
 import com.example.dal.mapper.SysUserMapper;
+import com.example.security.utils.SecurityUtil;
 import com.example.web.mapper.UserTransfer;
 import com.example.web.req.UserSaveReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -76,6 +78,8 @@ public class SysUserService {
         }
 
         // 4. 持久化更新到数据库
+        sysUser.setModifiedBy(SecurityUtil.getCurrentUsername());
+        sysUser.setModified(LocalDateTime.now());
         int updatedRows = sysUserMapper.updateById(sysUser); // 使用 sysUser 对象进行更新
         if (updatedRows <= 0) {
             // 根据业务逻辑，如果 updatedRows == 0 但没有错误，可能表示没有字段实际变化
