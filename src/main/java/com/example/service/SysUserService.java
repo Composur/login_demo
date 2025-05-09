@@ -3,6 +3,7 @@ package com.example.service;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.Response;
 import com.example.common.util.PasswordUtil;
 import com.example.dal.entity.SysUserEntity;
@@ -20,7 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-public class SysUserService {
+public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
     @Autowired
     private SysUserMapper sysUserMapper;
 
@@ -105,8 +106,9 @@ public class SysUserService {
      * @param ids .
      * @return .
      */
-    public int deleteByIds(Set<String> ids) {
-        return sysUserMapper.deleteBatchIds(ids);
+    public boolean deleteByIds(Set<String> ids) {
+        //return sysUserMapper.deleteBatchIds(ids);
+        return removeByIds(ids);
     }
 
 
