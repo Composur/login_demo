@@ -100,6 +100,17 @@ public class SysUserService {
     }
 
     /**
+     * 删除用户
+     *
+     * @param ids .
+     * @return .
+     */
+    public int deleteByIds(Set<String> ids) {
+        return sysUserMapper.deleteBatchIds(ids);
+    }
+
+
+    /**
      * 根据用户名查询用户是否存在
      **/
     public boolean checkUsername(String username) {

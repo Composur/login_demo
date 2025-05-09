@@ -9,6 +9,7 @@ import com.example.web.req.UserSaveReq;
 import com.example.web.resp.PageResult;
 import com.example.web.resp.SysUserResp;
 import lombok.AllArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +33,17 @@ public class SysUserController {
     @PostMapping("/save")
     public Response<?> save(@RequestBody UserSaveReq req) {
         return sysUserService.save(req);
+    }
+
+    @DeleteMapping("/delete")
+    public Response<?> delete(@Validated @RequestBody Set<String> ids) {
+        if (null == ids || ids.isEmpty()) {
+            return Response.error("id 为空！");
+        }
+        sysUserService.deleteByIds(ids);
+        //根据用户ID删除用户角色
+        //sysUserService.deleteUserRoleByUserId(id);
+        return Response.success("删除成功！");
     }
 
     /**
