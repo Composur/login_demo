@@ -8,13 +8,10 @@ import com.example.common.Response;
 import com.example.common.util.PasswordUtil;
 import com.example.dal.entity.SysUserEntity;
 import com.example.dal.mapper.SysUserMapper;
-import com.example.security.utils.SecurityUtil;
 import com.example.web.mapper.UserTransfer;
 import com.example.web.req.UserSaveReq;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -22,8 +19,8 @@ import java.util.Set;
 
 @Service
 public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
-    @Autowired
-    private SysUserMapper sysUserMapper;
+    // @Autowired // 如果继承了 ServiceImpl，这个可以移除，使用 baseMapper
+    //private SysUserMapper baseMapper;
 
 
     /**
@@ -43,64 +40,64 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
         SysUserEntity sysUser = UserTransfer.INSTANCE.toSysUserEntity(req);
         // 4. 对密码进行加密
         sysUser.setPassword(PasswordUtil.encoder(sysUser.getPassword()));
-        // 5. 设置其他必要字段
-        sysUser.setCreatedBy(SecurityUtil.getCurrentUsername());
-        sysUser.setModified(LocalDateTime.now());
-        sysUser.setModifiedBy(SecurityUtil.getCurrentUsername());
+        // 5. 设置其他必要字段 (审计字段将自动填充)
+        // sysUser.setCreatedBy(SecurityUtil.getCurrentUsername()); // 移除
+        // sysUser.setModified(LocalDateTime.now()); // 移除 (注意：created 字段也应在实体中标记为 INSERT fill)
+        // sysUser.setModifiedBy(SecurityUtil.getCurrentUsername()); // 移除
+
         // 6. 调用 Mapper 执行插入操作
-        int insertedRows = sysUserMapper.insert(sysUser);
-        if (insertedRows <= 0) {
+        // 如果您继承了 ServiceImpl，可以直接调用 this.save(sysUser) 或 baseMapper.insert(sysUser)
+        boolean saved = this.save(sysUser); // ServiceImpl 的 save 方法
+        if (!saved) {
             return Response.error("保存失败");
         }
         List<String> roleIds = req.getRoleIds();
-        sysUserMapper.saveUserRole(sysUser.getId(), new HashSet<>(roleIds));
+        // 确保 sysUser.getId() 在 save 方法后能获取到
+        if (sysUser.getId() != null && roleIds != null && !roleIds.isEmpty()) {
+            baseMapper.saveUserRole(sysUser.getId(), new HashSet<>(roleIds));
+        }
         return Response.success("保存成功");
     }
 
     public Response<?> update(UserSaveReq req) {
         // 1. 根据 ID 查询用户
-        SysUserEntity sysUser = null;
-        try {
-            sysUser = sysUserMapper.selectById(req.getId());
-        } catch (Exception e) {
-            // 更具体的异常捕获可能更好，或者让全局异常处理器处理
-            return Response.error("查询用户失败"); // 或者更具体的错误信息
-        }
+        SysUserEntity sysUser = baseMapper.selectById(req.getId()); // 使用 baseMapper
         if (sysUser == null) {
             return Response.error("用户不存在");
         }
 
         // 2. 更新用户信息
-        UserTransfer.INSTANCE.updateUserFromReq(req, sysUser); // sysUser 对象现在包含了来自 req 的更新
+        UserTransfer.INSTANCE.updateUserFromReq(req, sysUser);
 
-        // 3. 特殊字段处理 (例如密码加密，如果密码字段在 req 中并且被更新了)
+        // 3. 特殊字段处理 (例如密码加密)
         if (StrUtil.isNotBlank(req.getPassword())) {
             if (StrUtil.isBlank(req.getConfirmPassword()) || !req.getPassword().equals(req.getConfirmPassword())) {
                 return Response.error("二次密码不一致");
             }
             sysUser.setPassword(PasswordUtil.encoder(req.getPassword()));
+        } else {
+            // 如果密码为空，确保不更新密码字段，或者在 UserTransfer 中处理
+            sysUser.setPassword(null); // 这样 updateById 时，如果密码为 null，MP 默认不会更新该字段
         }
 
-        // 4. 持久化更新到数据库
-        sysUser.setModifiedBy(SecurityUtil.getCurrentUsername());
-        sysUser.setModified(LocalDateTime.now());
-        int updatedRows = sysUserMapper.updateById(sysUser); // 使用 sysUser 对象进行更新
-        if (updatedRows <= 0) {
-            // 根据业务逻辑，如果 updatedRows == 0 但没有错误，可能表示没有字段实际变化
-            // 但如果期望至少有一行被更新，则可以视为一个问题
+
+        // 4. 持久化更新到数据库 (审计字段将自动填充)
+        // sysUser.setModifiedBy(SecurityUtil.getCurrentUsername()); // 移除
+        // sysUser.setModified(LocalDateTime.now()); // 移除
+        boolean updated = this.updateById(sysUser); // ServiceImpl 的 updateById 方法
+        if (!updated) {
             return Response.error("更新用户信息失败，可能没有数据被修改或用户不存在");
         }
 
-        // 5. 更新用户角色关联 (如果需要)
-        // 通常是先删除旧关联，再添加新关联
-        if (req.getRoleIds() != null) { // 只有当请求中明确传来 roleIds 时才更新
-            sysUserMapper.deleteUserRoleByUserId(sysUser.getId()); // 假设您有此方法
+        // 5. 更新用户角色关联
+        if (req.getRoleIds() != null) {
+            baseMapper.deleteUserRoleByUserId(sysUser.getId());
             if (!req.getRoleIds().isEmpty()) {
-                sysUserMapper.saveUserRole(sysUser.getId(), new HashSet<>(req.getRoleIds()));
+                baseMapper.saveUserRole(sysUser.getId(), new HashSet<>(req.getRoleIds()));
             }
         }
 
-        return Response.success("更新成功"); // 或者 Response.success(true, "更新成功");
+        return Response.success("更新成功");
     }
 
     /**
@@ -110,7 +107,7 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
      * @return .
      */
     public boolean deleteByIds(Set<String> ids) {
-        //return sysUserMapper.deleteBatchIds(ids);
+        //return baseMapper.deleteBatchIds(ids);
         return removeByIds(ids);
     }
 
@@ -120,7 +117,7 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
      **/
     public boolean checkUsername(String username) {
         // 调用 Mapper 层获取用户数量
-        Integer count = sysUserMapper.checkUsername(username);
+        Integer count = baseMapper.checkUsername(username);
         // 在 Service 层判断数量是否大于 0，返回 boolean 值
         return count > 0;
     }
@@ -137,7 +134,7 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
         //LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
         //        .eq(SysUser::getUsername, username);
         //return Optional.ofNullable(getOne(queryWrapper));
-        SysUserEntity sysUser = sysUserMapper.getByUsername(username);
+        SysUserEntity sysUser = baseMapper.getByUsername(username);
         return Optional.ofNullable(sysUser);
     }
 
@@ -147,7 +144,7 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
      * @return .
      */
     public Set<String> getRoleCodeByUsername(String username) {
-        return sysUserMapper.getRoleCodeByUsername(username);
+        return baseMapper.getRoleCodeByUsername(username);
     }
 
 
@@ -157,7 +154,7 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
      * @return .
      */
     public Set<String> allRoleCode() {
-        return sysUserMapper.allRoleCode();
+        return baseMapper.allRoleCode();
     }
 
     // 修改方法，返回 IPage<UserDTO>
@@ -175,7 +172,7 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
 
         // 2. 调用 Mapper 方法，传入 Page 对象 (不再需要手动计算 offset)
         // MP分页插件会自动拦截这个调用，并附加分页SQL以及执行Count查询
-        IPage<SysUserEntity> userEntityPage = sysUserMapper.selectUserPage(pageRequest);
+        IPage<SysUserEntity> userEntityPage = baseMapper.selectUserPage(pageRequest);
 
         // 3. 将 IPage<SysUserEntity> 转换为 IPage<UserDTO>
         IPage<SysUserEntity> userDtoPage = userEntityPage.convert(entity -> {
@@ -192,6 +189,6 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
      * @return 角色ID列表
      */
     public Set<String> queryRoleIdsByUserId(String id) {
-        return sysUserMapper.queryRoleIdsByUserId(id);
+        return baseMapper.queryRoleIdsByUserId(id);
     }
 }
