@@ -1,10 +1,12 @@
 package com.example.web.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.common.Response;
 import com.example.dal.entity.SysUserEntity;
 import com.example.service.SysUserService;
 import com.example.web.mapper.UserTransfer;
+import com.example.web.req.PwdRestReq;
 import com.example.web.req.UserSaveReq;
 import com.example.web.resp.PageResult;
 import com.example.web.resp.SysUserResp;
@@ -35,6 +37,12 @@ public class SysUserController {
         return sysUserService.save(req);
     }
 
+    /**
+     * 删除用户
+     *
+     * @param ids
+     * @return
+     */
     @DeleteMapping("/delete")
     public Response<?> delete(@Validated @RequestBody Set<String> ids) {
         if (null == ids || ids.isEmpty()) {
@@ -55,6 +63,14 @@ public class SysUserController {
     @PutMapping("/update/{id}")
     public Response<?> update(@PathVariable String id, @RequestBody UserSaveReq req) {
         return sysUserService.update(req);
+    }
+
+    @PutMapping("/reset/passwd/{username}")
+    public Response<?> resetPasswd(@PathVariable String username, @RequestBody PwdRestReq req) {
+        if (StrUtil.isBlank(req.getNewPassword()) || StrUtil.isBlank(req.getConfirmPassword()) || !req.getNewPassword().equals(req.getConfirmPassword())) {
+            return Response.error("两次密码不一致");
+        }
+        return Response.success(sysUserService.resetPasswd(username, req));
     }
 
     /**

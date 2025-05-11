@@ -3,6 +3,7 @@ package com.example.dal.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.dal.entity.SysUserEntity;
+import com.example.web.req.PwdRestReq;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -82,5 +83,5 @@ public interface SysUserMapper extends BaseMapper<SysUserEntity> {
      */
     IPage<SysUserEntity> selectUserPage(IPage<SysUserEntity> page); // 修改方法签名和名称
 
-    void update(SysUserEntity sysUserEntity);
+    boolean resetPasswd(String id, PwdRestReq req);
 }

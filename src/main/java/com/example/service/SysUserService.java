@@ -9,6 +9,7 @@ import com.example.common.util.PasswordUtil;
 import com.example.dal.entity.SysUserEntity;
 import com.example.dal.mapper.SysUserMapper;
 import com.example.web.mapper.UserTransfer;
+import com.example.web.req.PwdRestReq;
 import com.example.web.req.UserSaveReq;
 import org.springframework.stereotype.Service;
 
@@ -59,6 +60,12 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
         return Response.success("保存成功");
     }
 
+    /**
+     * 更新用户
+     *
+     * @param req .
+     * @return .
+     */
     public Response<?> update(UserSaveReq req) {
         // 1. 根据 ID 查询用户
         SysUserEntity sysUser = baseMapper.selectById(req.getId()); // 使用 baseMapper
@@ -98,6 +105,30 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
         }
 
         return Response.success("更新成功");
+    }
+
+    /**
+     * 重置密码
+     *
+     * @param username 用户ID.
+     * @param req      包含新密码和确认密码的请求对象.
+     * @return 操作是否成功.
+     */
+    public boolean resetPasswd(String username, PwdRestReq req) {
+        // 1. 根据 ID 查询用户
+        SysUserEntity sysUserEntity = baseMapper.getByUsername(username);
+        if (sysUserEntity == null) {
+            return false;
+        }
+
+
+        // 3. 对新密码进行加密
+        String encodedPassword = PasswordUtil.encoder(req.getNewPassword());
+        sysUserEntity.setPassword(encodedPassword);
+
+        // 4. 更新用户信息
+        // setModifiedBy 和 setModified 会由 MybatisPlus 自动填充逻辑处理 (如果配置了)
+        return this.updateById(sysUserEntity); // 使用 ServiceImpl 的 updateById 方法
     }
 
     /**
