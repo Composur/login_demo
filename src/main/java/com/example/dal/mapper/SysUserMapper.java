@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.dal.entity.SysUserEntity;
 import com.example.web.req.PwdRestReq;
+import com.example.web.req.UserQueryReq;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -81,7 +82,7 @@ public interface SysUserMapper extends BaseMapper<SysUserEntity> {
      * @param page 分页参数对象 (包含 current, size)
      * @return 分页结果对象 (包含 records, total, pages 等)
      */
-    IPage<SysUserEntity> selectUserPage(IPage<SysUserEntity> page); // 修改方法签名和名称
+    IPage<SysUserEntity> selectUserPage(IPage<SysUserEntity> page, @Param("query") UserQueryReq query); // 修改方法签名和名称
 
     boolean resetPasswd(String id, PwdRestReq req);
 }

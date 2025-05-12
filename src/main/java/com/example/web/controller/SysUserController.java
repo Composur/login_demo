@@ -7,6 +7,7 @@ import com.example.dal.entity.SysUserEntity;
 import com.example.service.SysUserService;
 import com.example.web.mapper.UserTransfer;
 import com.example.web.req.PwdRestReq;
+import com.example.web.req.UserQueryReq; // 新增导入
 import com.example.web.req.UserSaveReq;
 import com.example.web.resp.PageResult;
 import com.example.web.resp.SysUserResp;
@@ -90,21 +91,21 @@ public class SysUserController {
      * @return
      */
     @GetMapping("/query/page")
-    public Response<PageResult<SysUserResp>> queryPage(@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "1") int current) { // 修改方法名，添加默认值
+    public Response<PageResult<SysUserResp>> queryPage(UserQueryReq queryReq) { // 修改方法参数
         // 调用新的 Service 方法
-        IPage<SysUserEntity> userDtoPage = sysUserService.queryUserPage(size, current);
+        IPage<SysUserEntity> userEntityPage = sysUserService.queryUserPage(queryReq); // 传递 UserQueryReq 对象
 
-        // 将 List<UserDTO> 转换为 List<SysUserResp>
-        List<SysUserResp> sysUserResps = userDtoPage.getRecords().stream()
-                .map(userDTO -> UserTransfer.INSTANCE.toSysUserResp(userDTO)) // 使用注入的 UserTransfer
+        // 将 List<SysUserEntity> 转换为 List<SysUserResp>
+        List<SysUserResp> sysUserResps = userEntityPage.getRecords().stream()
+                .map(userEntity -> UserTransfer.INSTANCE.toSysUserResp(userEntity)) // 使用注入的 UserTransfer
                 .collect(Collectors.toList());
 
         // 从 IPage 对象获取正确的分页信息构建 PageResult
         PageResult<SysUserResp> pageResult = new PageResult<>(
                 sysUserResps,
-                userDtoPage.getTotal(), // 获取总记录数
-                userDtoPage.getCurrent(), // 获取当前页码
-                userDtoPage.getSize()     // 获取每页数量
+                userEntityPage.getTotal(), // 获取总记录数
+                userEntityPage.getCurrent(), // 获取当前页码
+                userEntityPage.getSize()     // 获取每页数量
         );
         return Response.success(pageResult);
     }

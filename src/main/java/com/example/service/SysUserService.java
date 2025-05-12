@@ -10,6 +10,7 @@ import com.example.dal.entity.SysUserEntity;
 import com.example.dal.mapper.SysUserMapper;
 import com.example.web.mapper.UserTransfer;
 import com.example.web.req.PwdRestReq;
+import com.example.web.req.UserQueryReq;
 import com.example.web.req.UserSaveReq;
 import org.springframework.stereotype.Service;
 
@@ -189,8 +190,11 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
     }
 
     // 修改方法，返回 IPage<UserDTO>
-    public IPage<SysUserEntity> queryUserPage(int size, int current) {
+    public IPage<SysUserEntity> queryUserPage(UserQueryReq queryReq) {
         // 校验参数
+        int current = queryReq.getCurrent();
+        int size = queryReq.getSize();
+
         if (current <= 0) {
             current = 1;
         }
@@ -201,16 +205,14 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
         // 1. 创建 MP 的 Page 对象
         IPage<SysUserEntity> pageRequest = new Page<>(current, size);
 
-        // 2. 调用 Mapper 方法，传入 Page 对象 (不再需要手动计算 offset)
-        // MP分页插件会自动拦截这个调用，并附加分页SQL以及执行Count查询
-        IPage<SysUserEntity> userEntityPage = baseMapper.selectUserPage(pageRequest);
+        // 2. 调用 Mapper 方法，传入 Page 对象和从 UserQueryReq 中获取的查询参数
+        IPage<SysUserEntity> userEntityPage = baseMapper.selectUserPage(
+                pageRequest,
+                queryReq
+        );
 
-        // 3. 将 IPage<SysUserEntity> 转换为 IPage<UserDTO>
-        IPage<SysUserEntity> userDtoPage = userEntityPage.convert(entity -> {
-            return UserTransfer.INSTANCE.toUserDto(entity);
-        });
-
-        return userDtoPage;
+        // 3. 直接返回 IPage<SysUserEntity>
+        return userEntityPage;
     }
 
     /**

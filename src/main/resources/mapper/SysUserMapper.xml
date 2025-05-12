@@ -64,6 +64,21 @@
         from sys_user t
         LEFT JOIN sys_org t1 ON t.org_id = t1.id
         where 1 = 1
+        <if test="query.username!=null and query.username!=''">
+            AND t.username LIKE CONCAT('%',#{query.username},'%')
+        </if>
+        <if test="query.nickname!=null and query.nickname!=''">
+            AND t.nickname LIKE CONCAT('%',#{query.nickname},'%')
+        </if>
+        <if test="query.phone!=null and query.phone!=''">
+            AND t.phone = #{query.phone}
+        </if>
+        <if test="query.orgId!=null and query.orgId!=''">
+            AND t.org_id = #{query.orgId}
+        </if>
+        <if test="query.enable != null ">
+            AND t.is_enabled = #{query.enable}
+        </if>
         ORDER BY t.created DESC
         <!-- LIMIT 子句由分页插件自动添加，此处需删除 -->
         <!-- LIMIT #{offset}, #{limit} -->
