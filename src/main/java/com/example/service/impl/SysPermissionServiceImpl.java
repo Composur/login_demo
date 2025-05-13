@@ -81,6 +81,12 @@ public class SysPermissionServiceImpl implements SysPermissionService {
         return buildRoutesTree(permissions);
     }
 
+    /**
+     * 查询用户权限对应的路由树
+     *
+     * @param userId 用户ID
+     * @return 路由树列表
+     */
     @Override
     public List<PermissionRoutesResp> queryRouteByUserid(String userId) {
         if (userId == null) {

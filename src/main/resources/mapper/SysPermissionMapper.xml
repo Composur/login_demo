@@ -97,11 +97,12 @@
 
     <!--  根据用户id查询菜单  -->
     <select id="listMenuByUserId" resultType="com.example.dal.entity.SysPermissionEntity">
-        SELECT
+        SELECT DISTINCT
         <include refid="field_list"/>
         FROM sys_permission p,sys_role_permission t,sys_user_role u, sys_user u1
         WHERE p.id = t.permission_id
         AND t.role_id = u.role_id
+        AND u.user_id = u1.id -- 添加了此 JOIN 条件
         AND u1.id = #{userId}
         AND p.menu_type in (0,1)
         <choose>
