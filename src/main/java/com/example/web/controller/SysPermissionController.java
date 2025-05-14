@@ -4,22 +4,30 @@ import com.example.common.Response;
 import com.example.security.utils.SecurityUtil;
 import com.example.service.SysPermissionService;
 import com.example.service.dto.UserDTO;
+import com.example.web.resp.PageResult;
 import com.example.web.resp.PermissionRoutesResp;
+import com.example.web.resp.SysUserMenuTreeResp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 @RestController
 @RequestMapping("/sys/permission")
 @RequiredArgsConstructor
-public class SysConfigController {
+public class SysPermissionController {
     private final SysPermissionService sysPermissionService;
 
+    /**
+     * 获取用户路由
+     *
+     * @return
+     */
     @GetMapping("/routes")
     public Response routes() {
         UserDTO user = SecurityUtil.getCurrentUser();
@@ -37,5 +45,21 @@ public class SysConfigController {
         }
         //routeCache.putCache(user.getUserid(), menuRoute);
         return Response.success(menuRoute);
+    }
+
+    /**
+     * 获取菜单
+     *
+     * @return
+     */
+    @GetMapping("/tree")
+    public Response<PageResult<SysUserMenuTreeResp>> tree() {
+        PageResult pageResult = new PageResult<>(
+                Collections.emptyList(),
+                0,
+                1,
+                10
+        );
+        return Response.success(pageResult);
     }
 }
