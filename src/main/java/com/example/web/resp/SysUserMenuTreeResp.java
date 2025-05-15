@@ -1,6 +1,7 @@
 package com.example.web.resp;
 
 import lombok.Data;
+
 import java.util.List;
 
 @Data
@@ -12,12 +13,12 @@ public class SysUserMenuTreeResp {
     /**
      * 菜单ID
      */
-    private Long id;
+    private String id;
 
     /**
      * 父菜单ID
      */
-    private Long parentId;
+    private String parentId;
 
     /**
      * 菜单标题

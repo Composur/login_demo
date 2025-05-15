@@ -3,7 +3,9 @@ package com.example.service.impl;
 import com.example.dal.entity.SysPermissionEntity;
 import com.example.dal.mapper.SysPermissionMapper;
 import com.example.service.SysPermissionService;
+import com.example.web.mapper.SysPermissionTransfer;
 import com.example.web.resp.PermissionRoutesResp;
+import com.example.web.resp.SysUserMenuTreeResp;
 import com.example.web.resp.VueMenuRouteMeta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -98,6 +100,48 @@ public class SysPermissionServiceImpl implements SysPermissionService {
         }
         // 转换为树形结构
         return buildRoutesTree(permissions);
+    }
+
+
+    @Override
+    public List<SysUserMenuTreeResp> queryMenuTree() {
+        List<SysPermissionEntity> permissions = sysPermissionMapper.list(null, null);
+        if (permissions != null) {
+            // 转换为树形结构
+            return buildMenuTree(permissions);
+        }
+        return List.of();
+    }
+
+    // 新增辅助方法：构建 SysUserMenuTreeResp 结构的树
+    private List<SysUserMenuTreeResp> buildMenuTree(List<SysPermissionEntity> permissions) {
+        // 复用已有的分组和根节点查找逻辑
+        Map<String, List<SysPermissionEntity>> parentIdMap = groupPermissionsByParentId(permissions);
+        List<SysPermissionEntity> rootMenus = filterAndSortRootMenus(permissions);
+
+        return rootMenus.stream()
+                .map(menu -> convertToMenuTreeResp(menu, parentIdMap))
+                .collect(Collectors.toList());
+    }
+
+    //将 SysPermissionEntity 转换为 SysUserMenuTreeResp
+    private SysUserMenuTreeResp convertToMenuTreeResp(SysPermissionEntity menu,
+                                                      Map<String, List<SysPermissionEntity>> parentIdMap) {
+        SysUserMenuTreeResp node = SysPermissionTransfer.INSTANCE.toSysUserMenuTreeResp(menu);
+
+        String menuId = menu.getId();
+        List<SysPermissionEntity> childrenEntities = parentIdMap.get(menuId);
+        if (childrenEntities != null && !childrenEntities.isEmpty()) {
+            // 子节点排序
+            childrenEntities.sort(java.util.Comparator.comparingInt(SysPermissionEntity::getRank));
+            node.setChildren(childrenEntities.stream()
+                    .map(child -> convertToMenuTreeResp(child, parentIdMap))
+                    .collect(Collectors.toList()));
+        } else {
+            // 确保 SysUserMenuTreeResp 类中有 setChildren 方法
+            node.setChildren(Collections.emptyList());
+        }
+        return node;
     }
 
 

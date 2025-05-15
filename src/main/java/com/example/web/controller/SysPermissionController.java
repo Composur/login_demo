@@ -4,7 +4,6 @@ import com.example.common.Response;
 import com.example.security.utils.SecurityUtil;
 import com.example.service.SysPermissionService;
 import com.example.service.dto.UserDTO;
-import com.example.web.resp.PageResult;
 import com.example.web.resp.PermissionRoutesResp;
 import com.example.web.resp.SysUserMenuTreeResp;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -53,13 +51,14 @@ public class SysPermissionController {
      * @return
      */
     @GetMapping("/tree")
-    public Response<PageResult<SysUserMenuTreeResp>> tree() {
-        PageResult pageResult = new PageResult<>(
-                Collections.emptyList(),
-                0,
-                1,
-                10
-        );
-        return Response.success(pageResult);
+    public Response<List<SysUserMenuTreeResp>> tree() {
+        List<SysUserMenuTreeResp> menuTree = sysPermissionService.queryMenuTree();
+        //PageResult pageResult = new PageResult<>(
+        //        menuTree,
+        //        0,
+        //        1,
+        //        10
+        //);
+        return Response.success(menuTree);
     }
 }
