@@ -4,6 +4,7 @@ import com.example.dal.entity.SysPermissionEntity;
 import com.example.dal.mapper.SysPermissionMapper;
 import com.example.service.SysPermissionService;
 import com.example.web.mapper.SysPermissionTransfer;
+import com.example.web.req.SysPermissionSaveReq;
 import com.example.web.resp.PermissionRoutesResp;
 import com.example.web.resp.SysUserMenuTreeResp;
 import com.example.web.resp.VueMenuRouteMeta;
@@ -111,6 +112,45 @@ public class SysPermissionServiceImpl implements SysPermissionService {
             return buildMenuTree(permissions);
         }
         return List.of();
+    }
+
+    /**
+     * @param req 权限菜单请求对象
+     * @return
+     */
+    /**
+     * 保存权限菜单信息
+     *
+     * @param req 权限菜单请求对象
+     * @return 保存后的权限实体对象
+     */
+    @Override
+    public SysPermissionEntity savePermission(SysPermissionSaveReq req) {
+        // 参数校验
+        if (req == null) {
+            throw new IllegalArgumentException("权限菜单请求对象不能为空");
+        }
+
+        // 转换请求对象为实体对象
+        SysPermissionEntity entity = SysPermissionTransfer.INSTANCE.toSysPermissionEntity(req);
+
+        // 判断是新增还是更新
+        if (entity.getId() == null || entity.getId().isEmpty()) {
+            // 新增操作 - 不需要手动设置ID、创建时间等，MyBatis Plus会自动处理
+            sysPermissionMapper.insert(entity);
+        } else {
+            // 更新操作 - 先查询是否存在
+            SysPermissionEntity existingEntity = sysPermissionMapper.selectById(entity.getId());
+            if (existingEntity == null) {
+                throw new RuntimeException("要更新的权限菜单不存在，ID: " + entity.getId());
+            }
+
+            // 执行更新操作 - 不需要手动设置更新时间，MyBatis Plus会自动处理
+            sysPermissionMapper.updateById(entity);
+        }
+
+        // 返回保存后的实体
+        return entity;
     }
 
     // 新增辅助方法：构建 SysUserMenuTreeResp 结构的树

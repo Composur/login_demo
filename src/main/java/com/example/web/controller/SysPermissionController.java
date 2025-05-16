@@ -4,12 +4,11 @@ import com.example.common.Response;
 import com.example.security.utils.SecurityUtil;
 import com.example.service.SysPermissionService;
 import com.example.service.dto.UserDTO;
+import com.example.web.req.SysPermissionSaveReq;
 import com.example.web.resp.PermissionRoutesResp;
 import com.example.web.resp.SysUserMenuTreeResp;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +19,13 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class SysPermissionController {
     private final SysPermissionService sysPermissionService;
+
+    @PostMapping("/save")
+    public Response save(@RequestBody SysPermissionSaveReq req) {
+        // 这里可以添加保存逻辑
+        sysPermissionService.savePermission(req);
+        return Response.success("保存成功");
+    }
 
     /**
      * 获取用户路由
@@ -52,13 +58,26 @@ public class SysPermissionController {
      */
     @GetMapping("/tree")
     public Response<List<SysUserMenuTreeResp>> tree() {
+        return getMenuTreeResponse();
+    }
+
+    /**
+     * 获取菜单树
+     *
+     * @return
+     */
+    @GetMapping("/tree/menu")
+    public Response<List<SysUserMenuTreeResp>> treeMenu() {
+        return getMenuTreeResponse();
+    }
+
+    /**
+     * 获取菜单树响应
+     *
+     * @return 菜单树响应
+     */
+    private Response<List<SysUserMenuTreeResp>> getMenuTreeResponse() {
         List<SysUserMenuTreeResp> menuTree = sysPermissionService.queryMenuTree();
-        //PageResult pageResult = new PageResult<>(
-        //        menuTree,
-        //        0,
-        //        1,
-        //        10
-        //);
         return Response.success(menuTree);
     }
 }
