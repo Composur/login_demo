@@ -51,6 +51,11 @@ public class SysUserMenuTreeResp {
     private String menuTypeName;
 
     /**
+     * 菜单类型
+     */
+    private Integer menuType;
+
+    /**
      * 是否启用
      */
     private Boolean enabled;

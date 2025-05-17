@@ -153,6 +153,16 @@ public class SysPermissionServiceImpl implements SysPermissionService {
         return entity;
     }
 
+    /**
+     * @param id
+     * @param req 权限菜单请求对象
+     * @return
+     */
+    @Override
+    public SysPermissionEntity updatePermission(String id, SysPermissionSaveReq req) {
+        return savePermission(req);
+    }
+
     // 新增辅助方法：构建 SysUserMenuTreeResp 结构的树
     private List<SysUserMenuTreeResp> buildMenuTree(List<SysPermissionEntity> permissions) {
         // 复用已有的分组和根节点查找逻辑
@@ -166,9 +176,28 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 
     //将 SysPermissionEntity 转换为 SysUserMenuTreeResp
     private SysUserMenuTreeResp convertToMenuTreeResp(SysPermissionEntity menu,
-                                                      Map<String, List<SysPermissionEntity>> parentIdMap) {
+                                                 Map<String, List<SysPermissionEntity>> parentIdMap) {
         SysUserMenuTreeResp node = SysPermissionTransfer.INSTANCE.toSysUserMenuTreeResp(menu);
-
+        
+        // 添加以下代码，确保菜单类型和菜单类型名称被正确赋值
+        node.setMenuType(menu.getMenuType());
+        // 根据菜单类型设置菜单类型名称
+        if (menu.getMenuType() != null) {
+            switch (menu.getMenuType()) {
+                case 0:
+                    node.setMenuTypeName("目录");
+                    break;
+                case 1:
+                    node.setMenuTypeName("菜单");
+                    break;
+                case 2:
+                    node.setMenuTypeName("按钮权限");
+                    break;
+                default:
+                    node.setMenuTypeName("");
+            }
+        }
+    
         String menuId = menu.getId();
         List<SysPermissionEntity> childrenEntities = parentIdMap.get(menuId);
         if (childrenEntities != null && !childrenEntities.isEmpty()) {

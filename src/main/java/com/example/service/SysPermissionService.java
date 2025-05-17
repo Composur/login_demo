@@ -35,4 +35,12 @@ public interface SysPermissionService {
      * @return 保存后的权限实体对象
      */
     SysPermissionEntity savePermission(SysPermissionSaveReq req);
+
+    /**
+     * 更新权限菜单信息
+     *
+     * @param req 权限菜单请求对象
+     * @return 更新后的权限实体对象
+     */
+    SysPermissionEntity updatePermission(String id, SysPermissionSaveReq req);
 }

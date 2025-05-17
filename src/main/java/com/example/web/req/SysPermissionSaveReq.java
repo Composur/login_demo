@@ -24,7 +24,7 @@ public class SysPermissionSaveReq {
     private Boolean showLink;
 
     public Integer getShowLink() {
-        return showLink ? 1 : 0;
+        return showLink == null ? 0 : (showLink ? 1 : 0);
     }
 
 
@@ -34,7 +34,7 @@ public class SysPermissionSaveReq {
     private Boolean enabled;
 
     public Integer getEnabled() {
-        return enabled ? 1 : 0;
+        return enabled == null ? 0 : (enabled ? 1 : 0);
     }
 
 
@@ -44,7 +44,7 @@ public class SysPermissionSaveReq {
     private Boolean keepAlive;
 
     public Integer getKeepAlive() {
-        return keepAlive ? 1 : 0;
+        return keepAlive == null ? 0 : (keepAlive ? 1 : 0);
     }
 
     /**
@@ -53,7 +53,7 @@ public class SysPermissionSaveReq {
     private Boolean showParent;
 
     public Integer getShowParent() {
-        return showParent ? 1 : 0;
+        return showParent == null ? 0 : (showParent ? 1 : 0);
     }
 
 

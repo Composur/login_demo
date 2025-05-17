@@ -1,6 +1,7 @@
 package com.example.web.controller;
 
 import com.example.common.Response;
+import com.example.common.annotation.WebLog;
 import com.example.security.utils.SecurityUtil;
 import com.example.service.SysPermissionService;
 import com.example.service.dto.UserDTO;
@@ -20,11 +21,32 @@ import java.util.Set;
 public class SysPermissionController {
     private final SysPermissionService sysPermissionService;
 
+    /**
+     * 保存
+     *
+     * @param req
+     * @return
+     */
     @PostMapping("/save")
     public Response save(@RequestBody SysPermissionSaveReq req) {
         // 这里可以添加保存逻辑
         sysPermissionService.savePermission(req);
         return Response.success("保存成功");
+    }
+
+    /**
+     * 更新
+     *
+     * @param id
+     * @param req
+     * @return
+     */
+    @WebLog("菜单编辑")
+    @PutMapping("/update")
+    public Response update(@RequestParam String id, @RequestBody SysPermissionSaveReq req) {
+        // 这里可以添加更新逻辑
+        sysPermissionService.updatePermission(id, req);
+        return Response.success("更新成功");
     }
 
     /**
