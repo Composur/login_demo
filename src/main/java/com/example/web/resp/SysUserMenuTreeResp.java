@@ -60,8 +60,46 @@ public class SysUserMenuTreeResp {
      */
     private Boolean enabled;
 
+
     /**
      * 子菜单列表
      */
     private List<SysUserMenuTreeResp> children;
+
+    /**
+     * 组件路径
+     */
+    private String component;
+
+
+    /**
+     * 是否为框架
+     */
+    private Boolean frame;
+
+    /**
+     * 是否为iframe
+     */
+    private Integer isFrame;
+
+
+    /**
+     * 名称
+     */
+    private String name;
+
+    /**
+     * 路径
+     */
+    private String path;
+
+    /**
+     * 排序
+     */
+    private Integer rank;
+
+    /**
+     * 是否显示父级
+     */
+    private Boolean showParent;
 }

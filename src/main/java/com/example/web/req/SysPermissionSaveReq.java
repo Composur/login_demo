@@ -7,6 +7,7 @@ import lombok.Data;
  */
 @Data
 public class SysPermissionSaveReq {
+    protected String id;
     /**
      * 菜单类型
      */
@@ -86,5 +87,10 @@ public class SysPermissionSaveReq {
      * 组件
      */
     private String component;
+
+    /**
+     * 父ID
+     */
+    private String parentId;
 
 }
