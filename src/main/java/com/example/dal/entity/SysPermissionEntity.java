@@ -108,4 +108,8 @@ public class SysPermissionEntity extends BaseEntity {
     //@Schema(description = "是否启用")
     @TableField("is_enable")
     private Integer enabled;
+
+    public Integer getEnabled() {
+        return enabled == null ? 0 : enabled;
+    }
 }

@@ -24,19 +24,11 @@ public class SysPermissionSaveReq {
      */
     private Boolean showLink;
 
-    public Integer getShowLink() {
-        return showLink == null ? 0 : (showLink ? 1 : 0);
-    }
-
 
     /**
      * 是否启用
      */
     private Boolean enabled;
-
-    public Integer getEnabled() {
-        return enabled == null ? 0 : (enabled ? 1 : 0);
-    }
 
 
     /**
@@ -44,18 +36,10 @@ public class SysPermissionSaveReq {
      */
     private Boolean keepAlive;
 
-    public Integer getKeepAlive() {
-        return keepAlive == null ? 0 : (keepAlive ? 1 : 0);
-    }
-
     /**
      * 是否显示父级
      */
     private Boolean showParent;
-
-    public Integer getShowParent() {
-        return showParent == null ? 0 : (showParent ? 1 : 0);
-    }
 
 
     /**

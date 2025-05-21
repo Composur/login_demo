@@ -17,7 +17,7 @@
         p.is_frame,
         p.menu_type,
         p.perms,
-        p.is_enable,
+        p.is_enable as enabled,
         p.created,
         p.created_by,
         p.modified,
