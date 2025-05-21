@@ -43,4 +43,6 @@ public interface SysPermissionService {
      * @return 更新后的权限实体对象
      */
     SysPermissionEntity updatePermission(String id, SysPermissionSaveReq req);
+
+    int deleteById(String id);
 }

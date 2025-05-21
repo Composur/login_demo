@@ -163,6 +163,18 @@ public class SysPermissionServiceImpl implements SysPermissionService {
         return savePermission(req);
     }
 
+    /**
+     * @param id
+     * @return
+     */
+    @Override
+    public int deleteById(String id) {
+        if (sysPermissionMapper.deleteById(id) > 0) {
+            return 1;
+        }
+        return 0;
+    }
+
     // 新增辅助方法：构建 SysUserMenuTreeResp 结构的树
     private List<SysUserMenuTreeResp> buildMenuTree(List<SysPermissionEntity> permissions) {
         // 复用已有的分组和根节点查找逻辑
@@ -176,9 +188,9 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 
     //将 SysPermissionEntity 转换为 SysUserMenuTreeResp
     private SysUserMenuTreeResp convertToMenuTreeResp(SysPermissionEntity menu,
-                                                 Map<String, List<SysPermissionEntity>> parentIdMap) {
+                                                      Map<String, List<SysPermissionEntity>> parentIdMap) {
         SysUserMenuTreeResp node = SysPermissionTransfer.INSTANCE.toSysUserMenuTreeResp(menu);
-        
+
         // 添加以下代码，确保菜单类型和菜单类型名称被正确赋值
         node.setMenuType(menu.getMenuType());
         // 根据菜单类型设置菜单类型名称
@@ -197,7 +209,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
                     node.setMenuTypeName("");
             }
         }
-    
+
         String menuId = menu.getId();
         List<SysPermissionEntity> childrenEntities = parentIdMap.get(menuId);
         if (childrenEntities != null && !childrenEntities.isEmpty()) {

@@ -49,6 +49,12 @@ public class SysPermissionController {
         return Response.success("更新成功");
     }
 
+    @DeleteMapping("/delete")
+    public Response delete(@RequestParam String id) {
+        sysPermissionService.deleteById(id);
+        return Response.success("删除成功");
+    }
+
     /**
      * 获取用户路由
      *
