@@ -1,5 +1,6 @@
 package com.example.service.impl;
 
+import com.example.common.enums.MenuType;
 import com.example.dal.entity.SysPermissionEntity;
 import com.example.dal.mapper.SysPermissionMapper;
 import com.example.service.SysPermissionService;
@@ -191,24 +192,11 @@ public class SysPermissionServiceImpl implements SysPermissionService {
                                                       Map<String, List<SysPermissionEntity>> parentIdMap) {
         SysUserMenuTreeResp node = SysPermissionTransfer.INSTANCE.toSysUserMenuTreeResp(menu);
 
-        // 添加以下代码，确保菜单类型和菜单类型名称被正确赋值
-        node.setMenuType(menu.getMenuType());
         // 根据菜单类型设置菜单类型名称
         if (menu.getMenuType() != null) {
-            switch (menu.getMenuType()) {
-                case 0:
-                    node.setMenuTypeName("目录");
-                    break;
-                case 1:
-                    node.setMenuTypeName("菜单");
-                    break;
-                case 2:
-                    node.setMenuTypeName("按钮权限");
-                    break;
-                default:
-                    node.setMenuTypeName("");
-            }
+            node.setMenuTypeName(MenuType.getNameByCode(menu.getMenuType()));
         }
+
 
         String menuId = menu.getId();
         List<SysPermissionEntity> childrenEntities = parentIdMap.get(menuId);
