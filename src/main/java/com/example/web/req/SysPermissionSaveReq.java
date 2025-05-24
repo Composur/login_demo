@@ -77,4 +77,9 @@ public class SysPermissionSaveReq {
      */
     private String parentId;
 
+    /**
+     * 权限标识
+     */
+    private String perms;
+
 }

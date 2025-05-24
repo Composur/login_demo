@@ -17,6 +17,7 @@ public interface SysPermissionTransfer {
     @Mapping(source = "showLink", target = "showLink", qualifiedByName = "booleanToInteger")
     @Mapping(source = "keepAlive", target = "keepAlive", qualifiedByName = "booleanToInteger")
     @Mapping(source = "showParent", target = "showParent", qualifiedByName = "booleanToInteger")
+    @Mapping(source = "perms", target = "perms")
     SysPermissionEntity toSysPermissionEntity(SysPermissionSaveReq req);
 
     PermissionRoutesResp toPermissionRoutesResp(SysPermissionEntity sysPermissionEntity);

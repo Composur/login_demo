@@ -3,7 +3,8 @@
 <mapper namespace="com.example.dal.mapper.SysRoleMapper">
 
     <select id="selectAll" resultType="com.example.dal.entity.SysRoleEntity">
-        SELECT id, role_name, role_code, description, is_system, created_by, created, modified_by, modified
+        SELECT id, role_name, role_code, description, is_enable as enabled, is_system, created_by, created, modified_by,
+        modified
         FROM sys_role
         <where>
             <!-- 始终只查询启用的角色 (如果需要) -->

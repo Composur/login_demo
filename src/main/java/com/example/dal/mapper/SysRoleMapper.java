@@ -3,17 +3,31 @@ package com.example.dal.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.dal.entity.SysRoleEntity;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param; // 引入 Param
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 @Mapper
 public interface SysRoleMapper extends BaseMapper<SysRoleEntity> {
 
-    // 修改 selectAll 方法签名，接受 roleCodes 参数
-    List<SysRoleEntity> selectAll(@Param("roleCodes") List<String> roleCodes);
-
-    // 删除或注释掉 selectRolesByCodes 的定义
-    // List<SysRoleEntity> selectRolesByCodes(@Param("roleCodes") List<String> roleCodes);
-
+    /**
+     * 根据条件查询角色列表
+     * @param roleCodes 角色编码列表，为null则不限制
+     * @param roleName 角色名称（模糊查询），为null则不限制
+     * @param enabled 是否启用，为null则不限制
+     * @return 角色列表
+     */
+    List<SysRoleEntity> selectAll(
+        @Param("roleCodes") List<String> roleCodes,
+        @Param("roleName") String roleName,
+        @Param("enabled") Boolean enabled
+    );
+    
+    /**
+     * 根据角色编码列表查询角色
+     * 兼容原有方法，内部调用selectAll
+     */
+    default List<SysRoleEntity> selectAll(@Param("roleCodes") List<String> roleCodes) {
+        return selectAll(roleCodes, null, null);
+    }
 }
