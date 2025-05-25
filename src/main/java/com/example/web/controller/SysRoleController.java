@@ -28,6 +28,7 @@ public class SysRoleController {
      */
     @GetMapping("/query/page")
     public Response<PageResult<SysRoleResp>> queryPage() {
+        // TODO  分页查询角色列表
         List<SysRoleResp> sysRoleResps = sysRoleService.queryList();
         PageResult<SysRoleResp> pageResult = new PageResult<>(sysRoleResps, 1, 1, 1);
         return Response.success(pageResult);
