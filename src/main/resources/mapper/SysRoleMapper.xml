@@ -17,6 +17,10 @@
                 </foreach>
             </if>
             <!-- 如果 roleCodes 为 null 或为空，则不添加额外的 role_code 条件，查询所有启用的角色 -->
+            <!-- 模糊查询 roleName-->
+            <if test="roleName != null and roleName != ''">
+                AND role_name LIKE CONCAT('%', #{roleName}, '%')
+            </if>
         </where>
         ORDER BY role_name <!-- 可以添加排序 -->
     </select>

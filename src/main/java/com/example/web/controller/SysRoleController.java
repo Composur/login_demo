@@ -2,6 +2,9 @@ package com.example.web.controller;
 
 import com.example.common.Response;
 import com.example.service.SysRoleService;
+import com.example.service.dto.RoleQueryDTO;
+import com.example.web.mapper.SysRoleTransfer;
+import com.example.web.req.SysRolePageReq;
 import com.example.web.resp.PageResult;
 import com.example.web.resp.SysRoleResp;
 import lombok.AllArgsConstructor;
@@ -27,9 +30,10 @@ public class SysRoleController {
      * @return
      */
     @GetMapping("/query/page")
-    public Response<PageResult<SysRoleResp>> queryPage() {
+    public Response<PageResult<SysRoleResp>> queryPage(SysRolePageReq req) {
         // TODO  分页查询角色列表
-        List<SysRoleResp> sysRoleResps = sysRoleService.queryList();
+        RoleQueryDTO queryDTO = SysRoleTransfer.INSTANCE.toRoleQueryDTO(req);
+        List<SysRoleResp> sysRoleResps = sysRoleService.queryList(queryDTO);
         PageResult<SysRoleResp> pageResult = new PageResult<>(sysRoleResps, 1, 1, 1);
         return Response.success(pageResult);
     }
@@ -41,7 +45,9 @@ public class SysRoleController {
      */
     @GetMapping("/query/list")
     public Response<List<SysRoleResp>> queryList() {
-        List<SysRoleResp> sysRoleResps = sysRoleService.queryList();
+        // 创建一个空的查询对象，用于查询所有数据
+        RoleQueryDTO queryDTO = new RoleQueryDTO();
+        List<SysRoleResp> sysRoleResps = sysRoleService.queryList(queryDTO);
         return Response.success(sysRoleResps);
     }
 
