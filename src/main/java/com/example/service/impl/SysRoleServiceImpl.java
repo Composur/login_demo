@@ -1,5 +1,6 @@
 package com.example.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.dal.entity.SysRoleEntity;
@@ -10,6 +11,7 @@ import com.example.service.dto.RoleQueryDTO;
 import com.example.service.dto.SysRoleDTO;
 import com.example.service.dto.UserDTO;
 import com.example.web.mapper.SysRoleTransfer;
+import com.example.web.req.SysRoleSaveReq;
 import com.example.web.resp.PageResult;
 import com.example.web.resp.SysRoleResp;
 import lombok.AllArgsConstructor;
@@ -27,10 +29,26 @@ public class SysRoleServiceImpl implements SysRoleService {
 
     private final SysRoleMapper sysRoleMapper;
 
+
+    /**
+     * 保存系统角色信息
+     *
+     * @param req 系统角色保存请求对象，包含需要保存的角色信息
+     * @return 返回保存后的角色ID，如果保存失败则返回空字符串
+     */
     @Override
-    public String save() {
-        // 实现保存逻辑...
-        return "1"; // 示例返回
+    public String save(SysRoleSaveReq req) {
+        // 将系统角色保存请求对象转换为系统角色实体对象
+        SysRoleEntity entity = SysRoleTransfer.INSTANCE.toSysRoleEntity(req);
+        // 插入系统角色实体对象到数据库
+        sysRoleMapper.insert(entity);
+        // 检查插入后的实体对象ID是否为空，以判断保存是否成功
+        if (entity.getId() == null) {
+            // 如果角色ID为空，则记录错误日志并返回空字符串
+            log.error("保存角色失败，角色ID为空");
+            return "";
+        }
+        return entity.getId();
     }
 
     @Override
@@ -99,7 +117,7 @@ public class SysRoleServiceImpl implements SysRoleService {
         queryDTO.setRoleCodes(userRoleCodes);
         return convertToRespList(sysRoleMapper.selectAll(queryDTO.getRoleCodes(), queryDTO.getRoleName(), queryDTO.getEnabled()));
     }
-    
+
     @Override
     public PageResult<SysRoleResp> queryRolesByPage(RoleQueryDTO queryDTO) {
         if (queryDTO == null) {
@@ -111,7 +129,7 @@ public class SysRoleServiceImpl implements SysRoleService {
             log.warn("无法获取当前用户信息，返回空角色列表");
             return new PageResult<>(Collections.emptyList(), 0, queryDTO.getCurrent(), queryDTO.getSize());
         }
-        
+
         // 根据用户类型决定查询方式
         if (currentUser.isManger()) {
             queryDTO.setOnlyOwnRoles(false);
@@ -124,19 +142,29 @@ public class SysRoleServiceImpl implements SysRoleService {
             }
             queryDTO.setRoleCodes(userRoleCodes);
         }
-        
+
         // 创建MyBatis-Plus分页对象
         Page<SysRoleEntity> page = new Page<>(queryDTO.getCurrent(), queryDTO.getSize());
-        
+
         // 调用Mapper的分页查询方法
-        IPage<SysRoleEntity> resultPage = sysRoleMapper.selectPage(page, queryDTO.getRoleCodes(), 
+        IPage<SysRoleEntity> resultPage = sysRoleMapper.selectPage(page, queryDTO.getRoleCodes(),
                 queryDTO.getRoleName(), queryDTO.getEnabled());
-        
+
         // 转换结果
         List<SysRoleResp> records = convertToRespList(resultPage.getRecords());
-        
+
         // 构建并返回分页结果
         return new PageResult<>(records, resultPage.getTotal(), resultPage.getCurrent(), resultPage.getSize());
+    }
+
+    /**
+     * 检查角色编码是否存在
+     */
+    @Override
+    public Boolean checkCode(String code) {
+        QueryWrapper<SysRoleEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("role_code", code);
+        return sysRoleMapper.selectCount(queryWrapper) > 0;
     }
 
     /**

@@ -5,14 +5,12 @@ import com.example.service.SysRoleService;
 import com.example.service.dto.RoleQueryDTO;
 import com.example.web.mapper.SysRoleTransfer;
 import com.example.web.req.SysRolePageReq;
+import com.example.web.req.SysRoleSaveReq;
 import com.example.web.resp.PageResult;
 import com.example.web.resp.SysRoleResp;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -49,8 +47,27 @@ public class SysRoleController {
         return Response.success(sysRoleResps);
     }
 
-    @PostMapping
-    public String save() {
-        return sysRoleService.save();
+
+    /**
+     * 检查角色编码是否有效
+     *
+     * @param code 待验证的代码字符串
+     * @return 返回一个Response对象，其中包含一个布尔值，表示代码是否有效
+     */
+    @GetMapping("/check/code")
+    public Response<Boolean> checkCode(String code) {
+        return Response.success(sysRoleService.checkCode(code));
+    }
+
+
+    /**
+     * 保存角色信息
+     *
+     * @param req 角色保存请求参数
+     * @return 响应结果
+     */
+    @PostMapping("/save")
+    public Response<String> save(@RequestBody SysRoleSaveReq req) {
+        return Response.success(sysRoleService.save(req));
     }
 }

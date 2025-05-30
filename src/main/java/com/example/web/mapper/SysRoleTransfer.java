@@ -4,6 +4,7 @@ import com.example.dal.entity.SysRoleEntity;
 import com.example.service.dto.RoleQueryDTO;
 import com.example.service.dto.SysRoleDTO;
 import com.example.web.req.SysRolePageReq;
+import com.example.web.req.SysRoleSaveReq;
 import com.example.web.resp.SysRoleResp;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,6 +20,8 @@ public interface SysRoleTransfer {
     SysRoleResp toSysRoleResp(SysRoleDTO sysRoleDTO);
 
     SysRoleDTO toSysRoleDTO(SysRoleEntity sysRoleEntity);
+
+    SysRoleEntity toSysRoleEntity(SysRoleSaveReq req);
 
     @Mapping(target = "roleCodes", expression = "java(roleCodeToList(req.getRoleCode()))")
     RoleQueryDTO toRoleQueryDTO(SysRolePageReq req);

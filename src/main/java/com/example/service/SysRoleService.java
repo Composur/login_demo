@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.service.dto.RoleQueryDTO;
+import com.example.web.req.SysRoleSaveReq;
 import com.example.web.resp.PageResult;
 import com.example.web.resp.SysRoleResp;
 
@@ -10,7 +11,7 @@ public interface SysRoleService {
     /**
      * 保存角色
      */
-    String save();
+    String save(SysRoleSaveReq req);
 
     /**
      * 查询角色列表（兼容原有方法）RoleQueryDTO queryDTO
@@ -36,7 +37,7 @@ public interface SysRoleService {
      * @return 角色列表
      */
     List<SysRoleResp> queryRolesByCondition(RoleQueryDTO queryDTO);
-    
+
     /**
      * 分页查询角色列表
      *
@@ -44,4 +45,7 @@ public interface SysRoleService {
      * @return 分页结果
      */
     PageResult<SysRoleResp> queryRolesByPage(RoleQueryDTO queryDTO);
+
+    Boolean checkCode(String code);
+
 }
