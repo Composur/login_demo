@@ -9,7 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 @Mapper
@@ -19,14 +19,19 @@ public interface SysRoleTransfer {
     SysRoleResp toSysRoleResp(SysRoleDTO sysRoleDTO);
 
     SysRoleDTO toSysRoleDTO(SysRoleEntity sysRoleEntity);
-    
+
     @Mapping(target = "roleCodes", expression = "java(roleCodeToList(req.getRoleCode()))")
     RoleQueryDTO toRoleQueryDTO(SysRolePageReq req);
-    
+
     /**
      * 将单个roleCode转换为List<String>
      */
     default List<String> roleCodeToList(String roleCode) {
-        return roleCode == null ? null : Collections.singletonList(roleCode);
+        if (roleCode == null || roleCode.isEmpty()) {
+            return null;
+        }
+        List<String> result = new ArrayList<>();
+        result.add(roleCode);
+        return result;
     }
 }

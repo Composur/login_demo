@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.service.dto.RoleQueryDTO;
+import com.example.web.resp.PageResult;
 import com.example.web.resp.SysRoleResp;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public interface SysRoleService {
      */
     List<SysRoleResp> queryList(RoleQueryDTO queryDTO);
 
+
     /**
      * 查询全部角色列表（仅管理员可用）
      */
@@ -29,8 +31,17 @@ public interface SysRoleService {
 
     /**
      * 根据查询条件获取角色列表
+     *
      * @param queryDTO 查询条件
      * @return 角色列表
      */
     List<SysRoleResp> queryRolesByCondition(RoleQueryDTO queryDTO);
+    
+    /**
+     * 分页查询角色列表
+     *
+     * @param queryDTO 查询条件（包含分页参数）
+     * @return 分页结果
+     */
+    PageResult<SysRoleResp> queryRolesByPage(RoleQueryDTO queryDTO);
 }

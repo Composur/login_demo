@@ -1,39 +1,42 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.dal.mapper.SysRoleMapper">
+    <!-- 基础列 -->
+    <sql id="Base_Column_List">
+        id, role_code, role_name, is_enable as enabled, description, created, created_by, modified, modified_by
+    </sql>
 
-    <select id="selectAll" resultType="com.example.dal.entity.SysRoleEntity">
-        SELECT id, role_name, role_code, description, is_enable as enabled, is_system, created_by, created, modified_by,
-        modified
-        FROM sys_role
+    <!-- 条件查询 -->
+    <sql id="Where_Clause">
         <where>
-            <!-- 始终只查询启用的角色 (如果需要) -->
-            is_enable = 1
-            <!-- 如果 roleCodes 不为 null 且不为空，则添加 IN 条件 -->
             <if test="roleCodes != null and roleCodes.size() > 0">
                 AND role_code IN
-                <foreach item="item" index="index" collection="roleCodes" open="(" separator="," close=")">
-                    #{item}
+                <foreach collection="roleCodes" item="code" open="(" separator="," close=")">
+                    #{code}
                 </foreach>
             </if>
-            <!-- 如果 roleCodes 为 null 或为空，则不添加额外的 role_code 条件，查询所有启用的角色 -->
-            <!-- 模糊查询 roleName-->
             <if test="roleName != null and roleName != ''">
                 AND role_name LIKE CONCAT('%', #{roleName}, '%')
             </if>
+            <if test="enabled != null">
+                AND is_enable = #{enabled}
+            </if>
         </where>
-        ORDER BY role_name <!-- 可以添加排序 -->
+    </sql>
+
+    <!-- 查询所有角色 -->
+    <select id="selectAll" resultType="com.example.dal.entity.SysRoleEntity">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_role
+        <include refid="Where_Clause"/>
     </select>
 
-    <!-- 删除或注释掉原来的 selectRolesByCodes (如果不再需要单独调用) -->
-    <!--
-    <select id="selectRolesByCodes" resultType="com.example.dal.entity.SysRoleEntity">
-        SELECT * FROM sys_role
-        WHERE role_code IN
-        <foreach item="item" index="index" collection="roleCodes" open="(" separator="," close=")">
-            #{item}
-        </foreach>
+    <!-- 分页查询角色 -->
+    <select id="selectPage" resultType="com.example.dal.entity.SysRoleEntity">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_role
+        <include refid="Where_Clause"/>
     </select>
-    -->
-
 </mapper>

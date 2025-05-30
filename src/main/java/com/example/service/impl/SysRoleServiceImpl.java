@@ -1,5 +1,7 @@
 package com.example.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.dal.entity.SysRoleEntity;
 import com.example.dal.mapper.SysRoleMapper;
 import com.example.security.utils.SecurityUtil;
@@ -8,6 +10,7 @@ import com.example.service.dto.RoleQueryDTO;
 import com.example.service.dto.SysRoleDTO;
 import com.example.service.dto.UserDTO;
 import com.example.web.mapper.SysRoleTransfer;
+import com.example.web.resp.PageResult;
 import com.example.web.resp.SysRoleResp;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -95,6 +98,45 @@ public class SysRoleServiceImpl implements SysRoleService {
         }
         queryDTO.setRoleCodes(userRoleCodes);
         return convertToRespList(sysRoleMapper.selectAll(queryDTO.getRoleCodes(), queryDTO.getRoleName(), queryDTO.getEnabled()));
+    }
+    
+    @Override
+    public PageResult<SysRoleResp> queryRolesByPage(RoleQueryDTO queryDTO) {
+        if (queryDTO == null) {
+            queryDTO = new RoleQueryDTO();
+        }
+
+        UserDTO currentUser = SecurityUtil.getCurrentUser();
+        if (currentUser == null) {
+            log.warn("无法获取当前用户信息，返回空角色列表");
+            return new PageResult<>(Collections.emptyList(), 0, queryDTO.getCurrent(), queryDTO.getSize());
+        }
+        
+        // 根据用户类型决定查询方式
+        if (currentUser.isManger()) {
+            queryDTO.setOnlyOwnRoles(false);
+        } else {
+            queryDTO.setOnlyOwnRoles(true);
+            List<String> userRoleCodes = currentUser.getRoles();
+            // 如果已指定roleCodes，则取交集
+            if (queryDTO.getRoleCodes() != null && !queryDTO.getRoleCodes().isEmpty()) {
+                userRoleCodes.retainAll(queryDTO.getRoleCodes());
+            }
+            queryDTO.setRoleCodes(userRoleCodes);
+        }
+        
+        // 创建MyBatis-Plus分页对象
+        Page<SysRoleEntity> page = new Page<>(queryDTO.getCurrent(), queryDTO.getSize());
+        
+        // 调用Mapper的分页查询方法
+        IPage<SysRoleEntity> resultPage = sysRoleMapper.selectPage(page, queryDTO.getRoleCodes(), 
+                queryDTO.getRoleName(), queryDTO.getEnabled());
+        
+        // 转换结果
+        List<SysRoleResp> records = convertToRespList(resultPage.getRecords());
+        
+        // 构建并返回分页结果
+        return new PageResult<>(records, resultPage.getTotal(), resultPage.getCurrent(), resultPage.getSize());
     }
 
     /**

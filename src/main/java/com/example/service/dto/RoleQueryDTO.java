@@ -34,4 +34,14 @@ public class RoleQueryDTO {
      * 是否启用，为null则不限制
      */
     private Integer enabled;
+    
+    /**
+     * 当前页码
+     */
+    private Long current = 1L;
+
+    /**
+     * 每页数量
+     */
+    private Long size = 10L;
 }
