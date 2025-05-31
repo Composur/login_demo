@@ -51,6 +51,33 @@ public class SysRoleServiceImpl implements SysRoleService {
         return entity.getId();
     }
 
+    /**
+     * 更新系统角色信息
+     *
+     * @param id  系统角色ID
+     * @param req 系统角色保存请求对象，包含需要更新的角色信息
+     * @return 返回更新后的角色ID，如果更新失败则返回空字符串
+     */
+    @Override
+    public String update(String id, SysRoleSaveReq req) {
+        if (id == null) {
+            log.error("角色ID为空，更新失败");
+            throw new IllegalArgumentException("角色ID不能为空");
+        }
+        if (req == null) {
+            log.error("角色更新请求为空");
+            throw new IllegalArgumentException("请求参数不能为空");
+        }
+
+        SysRoleEntity entity = SysRoleTransfer.INSTANCE.toSysRoleEntity(req);
+        entity.setId(id);
+        int rowsUpdated = sysRoleMapper.updateById(entity);
+        if (rowsUpdated == 0) {
+            log.warn("未找到要更新的角色，ID: {}", id);
+        }
+        return entity.getId();
+    }
+
     @Override
     public List<SysRoleResp> queryList(RoleQueryDTO queryDTO) {
         UserDTO currentUser = SecurityUtil.getCurrentUser();

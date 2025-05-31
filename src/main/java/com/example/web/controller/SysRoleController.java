@@ -70,4 +70,15 @@ public class SysRoleController {
     public Response<String> save(@RequestBody SysRoleSaveReq req) {
         return Response.success(sysRoleService.save(req));
     }
+
+    /**
+     * 更新角色信息
+     *
+     * @param req 角色更新请求参数
+     * @return 响应结果
+     */
+    @PutMapping("/update")
+    public Response<String> update(@RequestParam String id, @RequestBody SysRoleSaveReq req) {
+        return Response.success(sysRoleService.update(id, req));
+    }
 }

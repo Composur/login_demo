@@ -14,6 +14,11 @@ public interface SysRoleService {
     String save(SysRoleSaveReq req);
 
     /**
+     * 更新角色
+     */
+    String update(String id, SysRoleSaveReq req);
+
+    /**
      * 查询角色列表（兼容原有方法）RoleQueryDTO queryDTO
      * 根据当前用户权限自动判断返回全部角色或仅用户拥有的角色
      */
