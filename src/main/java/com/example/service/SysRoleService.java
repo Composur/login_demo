@@ -51,6 +51,20 @@ public interface SysRoleService {
      */
     PageResult<SysRoleResp> queryRolesByPage(RoleQueryDTO queryDTO);
 
+    /**
+     * 校验角色编码是否存在
+     *
+     * @param code 角色编码
+     * @return true：存在，false：不存在
+     */
     Boolean checkCode(String code);
 
+
+    /**
+     * 删除角色
+     *
+     * @param id 角色ID
+     * @return 删除结果
+     */
+    String delete(String id);
 }

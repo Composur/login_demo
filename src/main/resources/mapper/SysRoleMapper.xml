@@ -30,6 +30,7 @@
         <include refid="Base_Column_List"/>
         FROM sys_role
         <include refid="Where_Clause"/>
+        ORDER BY modified
     </select>
 
     <!-- 分页查询角色 -->

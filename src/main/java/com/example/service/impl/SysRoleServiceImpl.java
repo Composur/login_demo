@@ -78,6 +78,7 @@ public class SysRoleServiceImpl implements SysRoleService {
         return entity.getId();
     }
 
+
     @Override
     public List<SysRoleResp> queryList(RoleQueryDTO queryDTO) {
         UserDTO currentUser = SecurityUtil.getCurrentUser();
@@ -192,6 +193,26 @@ public class SysRoleServiceImpl implements SysRoleService {
         QueryWrapper<SysRoleEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("role_code", code);
         return sysRoleMapper.selectCount(queryWrapper) > 0;
+    }
+
+    /**
+     * 删除角色
+     */
+    @Override
+    public String delete(String id) {
+        if (id == null || id.trim().isEmpty()) {
+            log.error("删除角色失败，角色ID为空");
+            throw new IllegalArgumentException("角色ID不能为空");
+        }
+        int rowsDeleted = sysRoleMapper.deleteById(id);
+        if (rowsDeleted > 0) {
+            log.info("成功删除角色，ID: {}", id);
+        } else {
+            log.warn("删除角色失败或角色不存在，ID: {}", id);
+            // 根据业务需求，如果删除不成功（例如，角色不存在），您可能希望抛出异常或返回特定错误代码
+            //throw new EntityNotFoundException("未找到要删除的角色，ID: " + id);
+        }
+        return id;
     }
 
     /**

@@ -81,4 +81,15 @@ public class SysRoleController {
     public Response<String> update(@RequestParam String id, @RequestBody SysRoleSaveReq req) {
         return Response.success(sysRoleService.update(id, req));
     }
+
+    /**
+     * 删除角色信息
+     *
+     * @param id 角色ID
+     * @return 响应结果
+     */
+    @DeleteMapping("/delete")
+    public Response<String> delete(@RequestParam String id) {
+        return Response.success(sysRoleService.delete(id));
+    }
 }
