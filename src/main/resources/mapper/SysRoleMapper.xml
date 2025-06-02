@@ -3,7 +3,8 @@
 <mapper namespace="com.example.dal.mapper.SysRoleMapper">
     <!-- 基础列 -->
     <sql id="Base_Column_List">
-        id, role_code, role_name, is_enable as enabled, description, created, created_by, modified, modified_by
+        id, role_code, role_name, is_enable as enabled, description, is_system as isSystem, created, created_by,
+        modified, modified_by
     </sql>
 
     <!-- 条件查询 -->
