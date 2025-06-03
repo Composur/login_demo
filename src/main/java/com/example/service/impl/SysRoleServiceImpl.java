@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.dal.entity.SysRoleEntity;
 import com.example.dal.mapper.SysRoleMapper;
 import com.example.security.utils.SecurityUtil;
+import com.example.service.SysPermissionService;
 import com.example.service.SysRoleService;
 import com.example.service.dto.RoleQueryDTO;
 import com.example.service.dto.SysRoleDTO;
@@ -18,8 +19,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +31,7 @@ import java.util.stream.Collectors;
 public class SysRoleServiceImpl implements SysRoleService {
 
     private final SysRoleMapper sysRoleMapper;
+    private final SysPermissionService sysPermissionService; // 注入SysPermissionService
 
 
     /**
@@ -213,6 +217,25 @@ public class SysRoleServiceImpl implements SysRoleService {
             //throw new EntityNotFoundException("未找到要删除的角色，ID: " + id);
         }
         return id;
+    }
+
+    /**
+     * 查询角色权限
+     */
+    @Override
+    public List<String> queryPermissions(String id) {
+        if (id == null || id.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 将单个角色ID转换为List
+        List<String> roleIds = Collections.singletonList(id);
+
+        // 使用SysPermissionService查询角色拥有的权限编码
+        Set<String> permissionCodes = sysPermissionService.listPermissionIdsByRoleIds(roleIds);
+
+        // 将Set转换为List返回
+        return new ArrayList<>(permissionCodes);
     }
 
     /**

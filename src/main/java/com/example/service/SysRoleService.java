@@ -67,4 +67,12 @@ public interface SysRoleService {
      * @return 删除结果
      */
     String delete(String id);
+
+    /**
+     * 查询角色权限列表
+     *
+     * @param id 角色ID
+     * @return 权限列表
+     */
+    List<String> queryPermissions(String id);
 }

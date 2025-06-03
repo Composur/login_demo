@@ -92,4 +92,16 @@ public class SysRoleController {
     public Response<String> delete(@RequestParam String id) {
         return Response.success(sysRoleService.delete(id));
     }
+
+    /**
+     * 查询某个角色已授权的权限集合
+     *
+     * @param id 角色ID
+     * @return 响应结果
+     */
+    @GetMapping("/permission")
+    public Response<List<String>> queryPermissions(@RequestParam String id) {
+        return Response.success(sysRoleService.queryPermissions(id));
+    }
+
 }
