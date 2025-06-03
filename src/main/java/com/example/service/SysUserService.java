@@ -56,7 +56,7 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
         List<String> roleIds = req.getRoleIds();
         // 确保 sysUser.getId() 在 save 方法后能获取到
         if (sysUser.getId() != null && roleIds != null && !roleIds.isEmpty()) {
-            baseMapper.saveUserRole(sysUser.getId(), new HashSet<>(roleIds));
+            baseMapper.saveUserRole(sysUser.getId(), new HashSet<>(roleIds), sysUser.getId());
         }
         return Response.success("保存成功");
     }
@@ -101,7 +101,7 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
         if (req.getRoleIds() != null) {
             baseMapper.deleteUserRoleByUserId(sysUser.getId());
             if (!req.getRoleIds().isEmpty()) {
-                baseMapper.saveUserRole(sysUser.getId(), new HashSet<>(req.getRoleIds()));
+                baseMapper.saveUserRole(sysUser.getId(), new HashSet<>(req.getRoleIds()), sysUser.getId());
             }
         }
 

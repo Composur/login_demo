@@ -35,8 +35,7 @@ public interface SysUserMapper extends BaseMapper<SysUserEntity> {
      * @param roleIds 角色id集合
      * @return .
      */
-    int saveUserRole(@Param("id") String id, @Param("roleIds") Set<String> roleIds);
-
+    void saveUserRole(@Param("id") String userId, @Param("roleIds") Set<String> roleIds, @Param("operatorId") String operatorId);
 
     /**
      * 根据用户名查询用户是否存在

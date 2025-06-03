@@ -104,7 +104,7 @@
         AND t.role_id = u.role_id
         AND u.user_id = u1.id -- 添加了此 JOIN 条件
         AND u1.id = #{userId}
-        AND p.menu_type in (0,1)
+        AND p.menu_type in (1)
         <choose>
             <when test="is_enabled != null and is_enabled">
                 AND p.is_enable = 1
