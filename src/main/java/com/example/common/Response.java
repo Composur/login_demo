@@ -38,7 +38,7 @@ public class Response<T> {
     }
 
     // 新增：失败时的构造方法（使用默认错误码，省略 errors）
-    public static Response<?> error(String message) {
+    public static Response<String> error(String message) {
         // 使用默认错误码 10000，errors 传递 null
         return new Response<>(false, 10000, message, null, null);
     }

@@ -75,4 +75,13 @@ public interface SysRoleService {
      * @return 权限列表
      */
     List<String> queryPermissions(String id);
+
+    /**
+     * 为角色授予权限
+     *
+     * @param id            角色ID
+     * @param permissionIds 权限ID列表
+     * @return 授权结果
+     */
+    boolean grantPermission(String id, List<String> permissionIds);
 }

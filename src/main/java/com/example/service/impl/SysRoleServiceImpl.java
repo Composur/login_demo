@@ -232,10 +232,25 @@ public class SysRoleServiceImpl implements SysRoleService {
         List<String> roleIds = Collections.singletonList(id);
 
         // 使用SysPermissionService查询角色拥有的权限编码
-        Set<String> permissionCodes = sysPermissionService.listPermissionIdsByRoleIds(roleIds);
+        Set<String> permissionCodes = sysPermissionService.listPermissionByRoleIds(roleIds);
 
         // 将Set转换为List返回
         return new ArrayList<>(permissionCodes);
+    }
+
+    /**
+     * 授予角色权限
+     */
+    @Override
+    public boolean grantPermission(String id, List<String> permissionIds) {
+        if (id == null || id.isEmpty()) {
+            throw new IllegalArgumentException("角色ID不能为空");
+        }
+        if (permissionIds != null && !permissionIds.isEmpty()) {
+            return sysPermissionService.grantPermission(id, permissionIds);
+        }
+        log.warn("无效的权限ID列表: {} 角色ID: {}","null", id);
+        throw new IllegalArgumentException("权限ID列表不合法");
     }
 
     /**

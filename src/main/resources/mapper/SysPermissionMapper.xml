@@ -46,7 +46,7 @@
         </choose>
     </select>
 
-
+    <!--查询用户权限-->
     <select id="listPermissionIdsByRoleIds" resultType="com.example.dal.entity.SysPermissionEntity">
         SELECT
         <include refid="field_list"/>

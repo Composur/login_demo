@@ -104,4 +104,36 @@ public class SysRoleController {
         return Response.success(sysRoleService.queryPermissions(id));
     }
 
+    /**
+     * 为某个角色授予权限
+     *
+     * @param id            角色ID
+     * @param permissionIds 权限ID集合
+     * @return 响应结果
+     */
+    @PutMapping("/permission")
+    public Response<?> grantPermission(
+            @RequestParam String id,
+            @RequestBody List<String> permissionIds) {
+
+        if (id == null || id.trim().isEmpty()) {
+            return Response.error("角色ID不能为空");
+        }
+
+        if (permissionIds == null || permissionIds.isEmpty()) {
+            return Response.error("权限ID列表不能为空");
+        }
+
+        try {
+            boolean result = sysRoleService.grantPermission(id, permissionIds);
+            return result
+                    ? Response.success()
+                    : Response.error("权限更新未生效");
+        } catch (IllegalArgumentException invalidArg) {
+            return Response.error(invalidArg.getMessage());
+        } catch (Exception e) {
+            return Response.error(e.getMessage());
+        }
+    }
+
 }

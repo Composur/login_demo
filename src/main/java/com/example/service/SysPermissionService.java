@@ -45,4 +45,15 @@ public interface SysPermissionService {
     SysPermissionEntity updatePermission(String id, SysPermissionSaveReq req);
 
     int deleteById(String id);
+
+    /**
+     * 授权权限
+     *
+     * @param roleId        不能为空
+     * @param permissionIds 权限ID列表，不能为null且不包含空值
+     * @return 是否授权成功
+     * @throws IllegalArgumentException 如果参数不合法
+     */
+    boolean grantPermission(String roleId, List<String> permissionIds);
+
 }

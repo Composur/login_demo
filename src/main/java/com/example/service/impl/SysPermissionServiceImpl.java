@@ -176,6 +176,19 @@ public class SysPermissionServiceImpl implements SysPermissionService {
         return 0;
     }
 
+    /**
+     * 授权权限
+     *
+     * @param roleId
+     * @param permissionIds
+     * @return
+     */
+    @Override
+    public boolean grantPermission(String roleId, List<String> permissionIds) {
+        // 1. 根据角色ID删除已有的权限关联
+        return false;
+    }
+
     // 新增辅助方法：构建 SysUserMenuTreeResp 结构的树
     private List<SysUserMenuTreeResp> buildMenuTree(List<SysPermissionEntity> permissions) {
         // 复用已有的分组和根节点查找逻辑
