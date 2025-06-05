@@ -3,12 +3,14 @@ package com.example.service.impl;
 import com.example.common.enums.MenuType;
 import com.example.dal.entity.SysPermissionEntity;
 import com.example.dal.mapper.SysPermissionMapper;
+import com.example.dal.mapper.SysRolePermissionMapper;
 import com.example.service.SysPermissionService;
 import com.example.web.mapper.SysPermissionTransfer;
 import com.example.web.req.SysPermissionSaveReq;
 import com.example.web.resp.PermissionRoutesResp;
 import com.example.web.resp.SysUserMenuTreeResp;
 import com.example.web.resp.VueMenuRouteMeta;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +21,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class SysPermissionServiceImpl implements SysPermissionService {
     @Autowired
     private SysPermissionMapper sysPermissionMapper;
+
+    private final SysRolePermissionMapper sysRolePermissionMapper;
 
     /**
      * 获取所有权限编码
@@ -176,18 +181,6 @@ public class SysPermissionServiceImpl implements SysPermissionService {
         return 0;
     }
 
-    /**
-     * 授权权限
-     *
-     * @param roleId
-     * @param permissionIds
-     * @return
-     */
-    @Override
-    public boolean grantPermission(String roleId, List<String> permissionIds) {
-        // 1. 根据角色ID删除已有的权限关联
-        return false;
-    }
 
     // 新增辅助方法：构建 SysUserMenuTreeResp 结构的树
     private List<SysUserMenuTreeResp> buildMenuTree(List<SysPermissionEntity> permissions) {

@@ -7,6 +7,7 @@ import com.example.dal.entity.SysRoleEntity;
 import com.example.dal.mapper.SysRoleMapper;
 import com.example.security.utils.SecurityUtil;
 import com.example.service.SysPermissionService;
+import com.example.service.SysRolePermissionService;
 import com.example.service.SysRoleService;
 import com.example.service.dto.RoleQueryDTO;
 import com.example.service.dto.SysRoleDTO;
@@ -31,7 +32,9 @@ import java.util.stream.Collectors;
 public class SysRoleServiceImpl implements SysRoleService {
 
     private final SysRoleMapper sysRoleMapper;
-    private final SysPermissionService sysPermissionService; // 注入SysPermissionService
+    private final SysRolePermissionService sysRolePermissionService;
+    // 注入SysPermissionService
+    private final SysPermissionService sysPermissionService;
 
 
     /**
@@ -247,9 +250,9 @@ public class SysRoleServiceImpl implements SysRoleService {
             throw new IllegalArgumentException("角色ID不能为空");
         }
         if (permissionIds != null && !permissionIds.isEmpty()) {
-            return sysPermissionService.grantPermission(id, permissionIds);
+            return sysRolePermissionService.grantPermission(id, permissionIds);
         }
-        log.warn("无效的权限ID列表: {} 角色ID: {}","null", id);
+        log.warn("无效的权限ID列表: {} 角色ID: {}", "null", id);
         throw new IllegalArgumentException("权限ID列表不合法");
     }
 
