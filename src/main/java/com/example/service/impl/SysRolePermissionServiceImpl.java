@@ -41,4 +41,13 @@ public class SysRolePermissionServiceImpl extends ServiceImpl<SysRolePermissionM
         return this.saveBatch(rolePermissionEntities);
     }
 
+    /**
+     * @param roleId
+     * @return
+     */
+    @Override
+    public List<String> getPermissionIdByRoleId(String roleId) {
+        return sysRolePermissionMapper.getPermissionIdByRoleId(roleId);
+    }
+
 }

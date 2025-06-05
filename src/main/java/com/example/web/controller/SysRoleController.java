@@ -1,6 +1,7 @@
 package com.example.web.controller;
 
 import com.example.common.Response;
+import com.example.service.SysRolePermissionService;
 import com.example.service.SysRoleService;
 import com.example.service.dto.RoleQueryDTO;
 import com.example.web.mapper.SysRoleTransfer;
@@ -21,6 +22,8 @@ public class SysRoleController {
 
     @Autowired
     private final SysRoleService sysRoleService;
+
+    private final SysRolePermissionService sysRolePermissionService;
 
     /**
      * 分页查询角色列表
@@ -101,7 +104,7 @@ public class SysRoleController {
      */
     @GetMapping("/permission")
     public Response<List<String>> queryPermissions(@RequestParam String id) {
-        return Response.success(sysRoleService.queryPermissions(id));
+        return Response.success(sysRolePermissionService.getPermissionIdByRoleId(id));
     }
 
     /**

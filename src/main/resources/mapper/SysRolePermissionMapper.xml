@@ -8,4 +8,11 @@
             (#{item.id}, #{item.roleId}, #{item.permissionId}, #{item.dataRuleIds}, #{item.created}, #{item.createdBy})
         </foreach>
     </insert>
+    <select id="getPermissionIdByRoleId" resultType="String">
+        SELECT DISTINCT
+        permission_id
+        FROM
+        sys_role_permission
+        WHERE role_id = #{roleId}
+    </select>
 </mapper>
