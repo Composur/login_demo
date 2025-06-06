@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<!-- UserMapper.xml -->
+<!-- SysPermissionMapper.xml -->
 <mapper namespace="com.example.dal.mapper.SysPermissionMapper">
     <sql id="field_list">
         p.id,
@@ -97,18 +97,34 @@
 
     <!--  根据用户id查询菜单  -->
     <select id="listMenuByUserId" resultType="com.example.dal.entity.SysPermissionEntity">
-        SELECT DISTINCT
-        <include refid="field_list"/>
-        FROM sys_permission p,sys_role_permission t,sys_user_role u, sys_user u1
-        WHERE p.id = t.permission_id
-        AND t.role_id = u.role_id
-        AND u.user_id = u1.id -- 添加了此 JOIN 条件
-        AND u1.id = #{userId}
-        AND p.menu_type in (1)
+        WITH RECURSIVE menu_tree AS (
+        -- 获取用户的直接权限菜单
+        SELECT DISTINCT p.*
+        FROM sys_permission p
+        JOIN sys_role_permission rp ON p.id = rp.permission_id
+        JOIN sys_user_role ur ON rp.role_id = ur.role_id
+        WHERE ur.user_id = #{userId}
         <choose>
             <when test="is_enabled != null and is_enabled">
                 AND p.is_enable = 1
             </when>
         </choose>
+
+        UNION
+
+        -- 递归获取所有父级菜单
+        SELECT parent.*
+        FROM sys_permission parent
+        JOIN menu_tree child ON child.parent_id = parent.id
+        <choose>
+            <when test="is_enabled != null and is_enabled">
+                WHERE parent.is_enable = 1
+            </when>
+        </choose>
+        )
+        SELECT DISTINCT * FROM menu_tree
+        WHERE menu_type = 1;
     </select>
+
+
 </mapper>
