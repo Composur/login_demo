@@ -98,7 +98,7 @@
     <!--  根据用户id查询菜单  -->
     <select id="listMenuByUserId" resultType="com.example.dal.entity.SysPermissionEntity">
         WITH RECURSIVE menu_tree AS (
-        -- 获取用户的直接权限菜单
+        -- 锚查询：获取用户的所有直接权限，无论类型是什么
         SELECT DISTINCT p.*
         FROM sys_permission p
         JOIN sys_role_permission rp ON p.id = rp.permission_id
@@ -112,7 +112,7 @@
 
         UNION
 
-        -- 递归获取所有父级菜单
+        -- 递归查询：递归获取所有父级权限
         SELECT parent.*
         FROM sys_permission parent
         JOIN menu_tree child ON child.parent_id = parent.id
@@ -122,9 +122,10 @@
             </when>
         </choose>
         )
-        SELECT DISTINCT * FROM menu_tree
-        WHERE menu_type = 1;
+        -- 最后从构建好的完整权限树中，筛选出类型为菜单的项 (menu_type 为 0 或 1)
+        SELECT DISTINCT *
+        FROM menu_tree
+        WHERE menu_type IN (0,1)
     </select>
-
 
 </mapper>
