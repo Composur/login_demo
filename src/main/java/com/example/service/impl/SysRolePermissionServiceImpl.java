@@ -6,6 +6,7 @@ import com.example.dal.mapper.SysRolePermissionMapper;
 import com.example.service.SysRolePermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ public class SysRolePermissionServiceImpl extends ServiceImpl<SysRolePermissionM
      * @return
      */
     @Override
+    @Transactional // 添加事务注解
     public boolean grantPermission(String roleId, List<String> permissionIds) {
         // 1. 根据角色ID删除已有的权限关联
         sysRolePermissionMapper.deleteByMap(new HashMap<String, Object>() {{
@@ -37,7 +39,6 @@ public class SysRolePermissionServiceImpl extends ServiceImpl<SysRolePermissionM
             rolePermissionEntity.setPermissionId(permissionId);
             rolePermissionEntities.add(rolePermissionEntity);
         }
-
         return this.saveBatch(rolePermissionEntities);
     }
 
