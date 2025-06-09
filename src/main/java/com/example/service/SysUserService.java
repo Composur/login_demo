@@ -13,6 +13,7 @@ import com.example.web.req.PwdRestReq;
 import com.example.web.req.UserQueryReq;
 import com.example.web.req.UserSaveReq;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -67,6 +68,7 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
      * @param req .
      * @return .
      */
+    @Transactional
     public Response<?> update(UserSaveReq req) {
         // 1. 根据 ID 查询用户
         SysUserEntity sysUser = baseMapper.selectById(req.getId()); // 使用 baseMapper
@@ -101,6 +103,8 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
         if (req.getRoleIds() != null) {
             baseMapper.deleteUserRoleByUserId(sysUser.getId());
             if (!req.getRoleIds().isEmpty()) {
+                //String s = null;
+                //s.toString();
                 baseMapper.saveUserRole(sysUser.getId(), new HashSet<>(req.getRoleIds()), sysUser.getId());
             }
         }
