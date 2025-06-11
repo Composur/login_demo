@@ -37,6 +37,11 @@ public class Response<T> {
         return new Response<>(false, code, message, null, errors);
     }
 
+    // 失败时的构造方法（带错误码，带错误信息）
+    public static Response<?> error(Integer code, String message) {
+        return new Response<>(false, code, message, null, null);
+    }
+
     // 新增：失败时的构造方法（使用默认错误码，省略 errors）
     public static Response<String> error(String message) {
         // 使用默认错误码 10000，errors 传递 null
