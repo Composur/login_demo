@@ -1,5 +1,6 @@
 package com.example.web.controller;
 
+import com.example.common.BusinessException;
 import com.example.common.Response;
 import com.example.service.SysRolePermissionService;
 import com.example.service.SysRoleService;
@@ -115,28 +116,22 @@ public class SysRoleController {
      * @return 响应结果
      */
     @PutMapping("/permission")
-    public Response<?> grantPermission(
+    public Response<String> grantPermission(
             @RequestParam String id,
             @RequestBody List<String> permissionIds) {
 
         if (id == null || id.trim().isEmpty()) {
-            return Response.error("角色ID不能为空");
+            throw new IllegalArgumentException("角色ID不能为空");
         }
 
         if (permissionIds == null || permissionIds.isEmpty()) {
-            return Response.error("权限ID列表不能为空");
+            throw new IllegalArgumentException("权限ID列表不能为空");
         }
-
-        try {
-            boolean result = sysRoleService.grantPermission(id, permissionIds);
-            return result
-                    ? Response.success()
-                    : Response.error("权限更新未生效");
-        } catch (IllegalArgumentException invalidArg) {
-            return Response.error(invalidArg.getMessage());
-        } catch (Exception e) {
-            return Response.error(e.getMessage());
+        boolean result = sysRoleService.grantPermission(id, permissionIds);
+        if (!result) {
+            throw new BusinessException("权限更新未生效");
         }
+        return Response.success();
     }
 
 }

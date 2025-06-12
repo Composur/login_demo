@@ -28,7 +28,7 @@ public class Response<T> {
     }
 
     // 无数据的成功（如删除操作）
-    public static Response<?> success() {
+    public static Response<String> success() {
         return new Response<>(true, ResponseCode.SUCCESS, "成功", null, null);
     }
 
