@@ -5,11 +5,12 @@ import com.example.config.cache.CacheUtil;
 import com.example.config.cache.KeyValue;
 import com.example.config.cache.RedisCacheManager;
 import com.example.security.SecurityProperties;
+import com.example.service.dto.OnlineUserDTO;
 import com.example.service.dto.UserDTO;
 import com.example.web.req.LoginReq;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,6 +21,9 @@ public class JwtTokenRedisCacheProvider implements TokenProvider, CacheUtil {
 
     private final SecurityProperties securityProperties;
 
+    private final ObjectMapper objectMapper;
+
+
     @Override
     public String createToken(UserDTO userDTO) {
         return createToken(userDTO, null);
@@ -28,12 +32,13 @@ public class JwtTokenRedisCacheProvider implements TokenProvider, CacheUtil {
 
     @Override
     public String createToken(UserDTO userDTO, LoginReq loginReq) {
-        String _jwtToken = JwtUtil.sign(userDTO.getUsername(), securityProperties.getJwt().getJwtSecret());
-        //OnlineUser onlineUser = OnlineUser.convert(userDTO);
+        String token = JwtUtil.sign(userDTO.getUsername(), securityProperties.getJwt().getJwtSecret());
+        OnlineUserDTO onlineUser = OnlineUserDTO.convert(userDTO);
         //String json = JsonUtil.DEFAULT.toJson(onlineUser);
-        String key = getCacheKey(CacheKeyValue.online_user_cache, _jwtToken);
-        cache.set(key, "onlineUser", securityProperties.getJwt().getTokenValidity());
-        return _jwtToken;
+        String json = objectMapper.valueToTree(onlineUser).toString();
+        String cacheKey = getCacheKey(CacheKeyValue.online_user_cache, token);
+        cache.set(cacheKey, json, securityProperties.getJwt().getTokenValidity());
+        return token;
     }
 
     public boolean removeToken(String token) {
