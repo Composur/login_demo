@@ -40,6 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .frameOptions().disable() // 防止iframe 造成跨域
                 .and()
                 .sessionManagement()
+                // session 禁用,采用token方式
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 会话管理，无状态
                 .and()
                 .formLogin().disable() // 禁用表单登录
