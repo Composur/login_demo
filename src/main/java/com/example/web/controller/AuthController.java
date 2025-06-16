@@ -7,7 +7,7 @@ import com.example.common.util.RsaUtil;
 import com.example.event.LogoutEvent;
 import com.example.security.SecurityProperties;
 import com.example.security.token.JwtTokenRedisCacheProvider;
-import com.example.security.utils.SecurityUtil;
+import com.example.service.CurrentUserService;
 import com.example.service.dto.UserDTO;
 import com.example.web.mapper.UserTransfer;
 import com.example.web.req.LoginReq;
@@ -35,6 +35,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenRedisCacheProvider jwtTokenRedisCacheProvider;
     private final ApplicationContext applicationContext;
+    private final CurrentUserService currentUserService;
 
 
     @WebLog("用户登录接口")
@@ -86,7 +87,7 @@ public class AuthController {
             // 尝试从Token中解析用户信息，如果Token无效或过期，这里可能会失败
             // 注意：这里只是尝试获取用户信息用于记录日志或发布事件，
             // 即使获取失败，也应该继续执行Token的移除操作。
-            Object principal = SecurityUtil.getCurrentUser(); // 这个方法内部应该有对Token的校验
+            Object principal = currentUserService.getCurrentUser();
 
             if (principal instanceof UserDTO) {
                 UserDTO userDTO = (UserDTO) principal;
@@ -96,7 +97,7 @@ public class AuthController {
                 log.warn("当前用户主体不是UserDTO类型: {}，但仍将尝试使Token失效", principal.getClass().getName());
             } else {
                 // principal 为 null 的情况，可能是Token已失效，或者SecurityContext中没有认证信息
-                // 这种情况通常意味着用户已经 фактически 登出，或者Token无效
+                // 这种情况通常意味着用户已经实际 登出，或者Token无效
                 log.warn("无法获取当前用户信息，Token可能已失效或无效，将尝试移除Token: {}", jwtToken);
             }
 

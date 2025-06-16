@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -94,5 +95,16 @@ public class RedisCacheManager {
             log.error("【boot-admin-cache】Redis操作失败: {}", e.getMessage());
             return false;
         }
+    }
+    
+    /**
+     * 获取缓存
+     *
+     * @param key,自动追加前缀{@link #normaliz(String)}
+     * @return .
+     */
+    public Optional<String> getStr(final String key) {
+        String _key = normaliz(key);
+        return Optional.ofNullable(this.redisTemplate.opsForValue().get(_key));
     }
 }

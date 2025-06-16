@@ -2,7 +2,7 @@ package com.example.web.controller;
 
 import com.example.common.Response;
 import com.example.common.annotation.WebLog;
-import com.example.security.utils.SecurityUtil;
+import com.example.service.CurrentUserService;
 import com.example.service.SysPermissionService;
 import com.example.service.dto.UserDTO;
 import com.example.web.req.SysPermissionSaveReq;
@@ -20,6 +20,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class SysPermissionController {
     private final SysPermissionService sysPermissionService;
+    private final CurrentUserService currentUserService;
+
 
     /**
      * 保存
@@ -62,7 +64,7 @@ public class SysPermissionController {
      */
     @GetMapping("/routes")
     public Response routes() {
-        UserDTO user = SecurityUtil.getCurrentUser();
+        UserDTO user = currentUserService.getCurrentUser();
         //缓存
         //Optional<List<VueMenuRouteVO>> routeCacheOptional = routeCache.getCache(user.getUserid());
         //if (routeCacheOptional.isPresent()) {

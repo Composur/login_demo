@@ -5,7 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.dal.entity.SysRoleEntity;
 import com.example.dal.mapper.SysRoleMapper;
-import com.example.security.utils.SecurityUtil;
+import com.example.security.token.RedisUserCacheProvider;
+import com.example.service.CurrentUserService;
 import com.example.service.SysPermissionService;
 import com.example.service.SysRolePermissionService;
 import com.example.service.SysRoleService;
@@ -35,7 +36,8 @@ public class SysRoleServiceImpl implements SysRoleService {
     private final SysRolePermissionService sysRolePermissionService;
     // 注入SysPermissionService
     private final SysPermissionService sysPermissionService;
-
+    private final RedisUserCacheProvider redisUserCacheProvider;
+    private final CurrentUserService currentUserService;
 
     /**
      * 保存系统角色信息
@@ -88,8 +90,7 @@ public class SysRoleServiceImpl implements SysRoleService {
 
     @Override
     public List<SysRoleResp> queryList(RoleQueryDTO queryDTO) {
-        UserDTO currentUser = SecurityUtil.getCurrentUser();
-
+        UserDTO currentUser = currentUserService.getCurrentUser();
         // 如果用户不存在，返回空列表
         if (currentUser == null) {
             log.warn("无法获取当前用户信息，返回空角色列表");
@@ -108,7 +109,7 @@ public class SysRoleServiceImpl implements SysRoleService {
     @Override
     public List<SysRoleResp> queryAllRoles() {
         // 检查当前用户是否为管理员
-        UserDTO currentUser = SecurityUtil.getCurrentUser();
+        UserDTO currentUser = currentUserService.getCurrentUser();
         if (currentUser == null || !currentUser.isManger()) {
             log.warn("非管理员用户尝试查询所有角色，返回空列表");
             return Collections.emptyList();
@@ -120,7 +121,7 @@ public class SysRoleServiceImpl implements SysRoleService {
 
     @Override
     public List<SysRoleResp> queryOwnRoles() {
-        UserDTO currentUser = SecurityUtil.getCurrentUser();
+        UserDTO currentUser = currentUserService.getCurrentUser();
         if (currentUser == null) {
             log.warn("无法获取当前用户信息，返回空角色列表");
             return Collections.emptyList();
@@ -143,7 +144,7 @@ public class SysRoleServiceImpl implements SysRoleService {
             queryDTO = new RoleQueryDTO();
         }
 
-        UserDTO currentUser = SecurityUtil.getCurrentUser();
+        UserDTO currentUser = currentUserService.getCurrentUser();
         List<String> userRoleCodes = currentUser.getRoles();
         // 如果已指定roleCodes，则取交集
         if (queryDTO.getRoleCodes() != null && !queryDTO.getRoleCodes().isEmpty()) {
@@ -159,11 +160,7 @@ public class SysRoleServiceImpl implements SysRoleService {
             queryDTO = new RoleQueryDTO();
         }
 
-        UserDTO currentUser = SecurityUtil.getCurrentUser();
-        if (currentUser == null) {
-            log.warn("无法获取当前用户信息，返回空角色列表");
-            return new PageResult<>(Collections.emptyList(), 0, queryDTO.getCurrent(), queryDTO.getSize());
-        }
+        UserDTO currentUser = currentUserService.getCurrentUser();
 
         // 根据用户类型决定查询方式
         if (currentUser.isManger()) {
