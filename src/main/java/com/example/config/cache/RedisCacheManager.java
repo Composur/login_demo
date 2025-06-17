@@ -1,7 +1,7 @@
 package com.example.config.cache;
 
 import cn.hutool.core.util.StrUtil;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -14,9 +14,9 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RedisCacheManager {
-    private final RedisCacheProperties appCacheProperties;
+    private final RedisCacheProperties redisCacheProperties;
     private final StringRedisTemplate redisTemplate;
 
 
@@ -30,7 +30,7 @@ public class RedisCacheManager {
         if (StrUtil.isBlank(key)) {
             return null;
         }
-        return appCacheProperties.getCache().getPrefix() + ":" + key;
+        return redisCacheProperties.getCache().getPrefix() + ":" + key;
     }
 
     /**
@@ -79,11 +79,13 @@ public class RedisCacheManager {
      */
     public boolean set(final String key, String value, long timeout, TimeUnit unit) {
         if (StrUtil.isBlank(key)) {
-            log.warn("【boot-admin-cache】 set cache value warn, key missing");
+            String prefix = redisCacheProperties.getCache().getPrefix();
+            log.warn("【{}】 set cache value warn, key missing", prefix);
             return false;
         }
         String _key = normaliz(key);
-        log.debug("【boot-admin-cache】set cache value : key: {}, value: {},timeout: {}", _key, value, timeout);
+        String prefix = redisCacheProperties.getCache().getPrefix();
+        log.debug("【{}】set cache value : key: {}, value: {}, timeout: {}", prefix, _key, value, timeout);
         try {
             if (timeout == -1) {
                 this.redisTemplate.opsForValue().set(_key, value);
@@ -92,11 +94,11 @@ public class RedisCacheManager {
             }
             return Boolean.TRUE;
         } catch (Exception e) {
-            log.error("【boot-admin-cache】Redis操作失败: {}", e.getMessage());
+            log.error("Redis操作失败: {}", e.getMessage());
             return false;
         }
     }
-    
+
     /**
      * 获取缓存
      *
