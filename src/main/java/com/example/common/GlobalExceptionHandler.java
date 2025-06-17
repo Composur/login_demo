@@ -1,11 +1,19 @@
 package com.example.common;
 
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseBody
+    public Response<?> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
+        return Response.error(405, "不支持的请求方法，请使用正确的请求方式");
+    }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public Response<?> handleIllegalArgument(IllegalArgumentException ex) {
