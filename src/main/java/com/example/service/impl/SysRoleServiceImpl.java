@@ -229,10 +229,10 @@ public class SysRoleServiceImpl implements SysRoleService {
         }
 
         // 将单个角色ID转换为List
-        List<String> roleIds = Collections.singletonList(id);
+        List<String> permissionIds = Collections.singletonList(id);
 
         // 使用SysPermissionService查询角色拥有的权限编码
-        Set<String> permissionCodes = sysPermissionService.listPermissionByRoleIds(roleIds);
+        Set<String> permissionCodes = sysPermissionService.listPermissionCodesByPermissionIds(permissionIds);
 
         // 将Set转换为List返回
         return new ArrayList<>(permissionCodes);

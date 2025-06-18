@@ -41,7 +41,11 @@ public class SysPermissionServiceImpl implements SysPermissionService {
         return permissions.stream().map(SysPermissionEntity::getPerms).collect(Collectors.toSet());
     }
 
-    public Set<String> listPermissionByRoleIds(List<String> ids) {
+    /**
+     * @param ids
+     * @return
+     */
+    public Set<String> listPermissionCodesByPermissionIds(List<String> ids) {
         if (ids.isEmpty()) {
             return Collections.emptySet();
         }

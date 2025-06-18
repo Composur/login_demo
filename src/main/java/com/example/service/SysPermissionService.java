@@ -14,7 +14,7 @@ public interface SysPermissionService {
     Set<String> allPermissionCodes();
 
     // 根据角色id查询权限code
-    Set<String> listPermissionByRoleIds(List<String> roleIds);
+    Set<String> listPermissionCodesByPermissionIds(List<String> ids);
 
     // 根据角色id查询权限id
     Set<String> listPermissionIdsByRoleIds(List<String> roleIds);

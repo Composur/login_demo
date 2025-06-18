@@ -83,7 +83,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
                 // 根据角色ID集合获取权限ID集合
                 Set<String> permissionIds = sysPermissionService.listPermissionIdsByRoleIds(List.copyOf(roleIds));
                 // 根据权限ID集合获取权限编码集合
-                permissionCodes = sysPermissionService.listPermissionByRoleIds(List.copyOf(permissionIds));
+                permissionCodes = sysPermissionService.listPermissionCodesByPermissionIds(List.copyOf(permissionIds));
             }
         }
 

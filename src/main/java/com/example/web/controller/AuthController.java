@@ -52,6 +52,7 @@ public class AuthController {
         Authentication authentication = null;
         try {
             // 3.1 尝试认证 - 认证失败会抛出AuthenticationException
+            // 会调用UserDetailsService#loadUserByUsername(String username)
             authentication = authenticationManager.authenticate(authenticationToken);
         } catch (AuthenticationException e) {
             // 3.2 认证失败处理 - 返回错误信息和500状态码
