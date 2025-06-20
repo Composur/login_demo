@@ -9,8 +9,10 @@ import com.example.web.req.SysPermissionSaveReq;
 import com.example.web.resp.PermissionRoutesResp;
 import com.example.web.resp.SysUserMenuTreeResp;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +20,7 @@ import java.util.Set;
 @RestController
 @RequestMapping("/sys/permission")
 @RequiredArgsConstructor
+@Validated
 public class SysPermissionController {
     private final SysPermissionService sysPermissionService;
     private final CurrentUserService currentUserService;
@@ -52,7 +55,7 @@ public class SysPermissionController {
     }
 
     @DeleteMapping("/delete")
-    public Response delete(@RequestParam String id) {
+    public Response delete(@RequestParam @NotBlank(message = "id不能为空") String id) {
         sysPermissionService.deleteById(id);
         return Response.success("删除成功");
     }

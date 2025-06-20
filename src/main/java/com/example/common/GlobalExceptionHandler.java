@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolationException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -13,6 +15,13 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public Response<?> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
         return Response.error(405, "不支持的请求方法，请使用正确的请求方式");
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public Response handleConstraintViolationException(ConstraintViolationException ex) {
+        // 只取第一个错误信息
+        String errorMsg = ex.getConstraintViolations().iterator().next().getMessage();
+        return Response.error(ErrorCode.PARAM_ERROR.getCode(), errorMsg);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
