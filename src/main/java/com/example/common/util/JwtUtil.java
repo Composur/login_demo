@@ -21,7 +21,7 @@ public class JwtUtil {
      */
     public static final long EXPIRE_TIME = 120 * 60 * 1000;
 
-    private static final String X_ACCESS_TOKEN = "X-Access-Token";
+    public static final String X_ACCESS_TOKEN = "X-Access-Token";
 
     /**
      * 获取 request 里传递的 token

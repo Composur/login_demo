@@ -1,13 +1,9 @@
 package com.example.security.utils;
 
-import com.example.common.BusinessException;
-import com.example.common.util.SpringContextHolder;
-import com.example.security.token.UserCacheProvider;
-import com.example.service.dto.UserDTO;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * @date 2023/2/4
@@ -39,11 +35,30 @@ public class SecurityUtil {
     /**
      * 获取当前用户名
      *
-     * @return 当前用户名
+     * @return 当前用户名，若无法获取则返回 null
      */
     public static String getCurrentUsername() {
-        return (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var context = SecurityContextHolder.getContext();
+        if (context == null) {
+            return null;
+        }
+
+        var authentication = context.getAuthentication();
+        if (authentication == null) {
+            return null;
+        }
+
+        var principal = authentication.getPrincipal();
+        if (principal instanceof String) {
+            return (String) principal;
+        } else if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        } else {
+            // 其他未知类型的 Principal，避免 ClassCastException
+            return null;
+        }
     }
+
 
     /**
      * 获取当前权限, 权限是: 权限+角色
