@@ -84,42 +84,26 @@ public class AuthController {
             return Response.error(401, "登出失败，无效的会话");
         }
 
-        try {
-            // 尝试从Token中解析用户信息，如果Token无效或过期，这里可能会失败
-            // 注意：这里只是尝试获取用户信息用于记录日志或发布事件，
-            // 即使获取失败，也应该继续执行Token的移除操作。
-            Object principal = currentUserService.getCurrentUser();
-
-            if (principal instanceof UserDTO) {
-                UserDTO userDTO = (UserDTO) principal;
-                log.info("用户 {} 准备登出", userDTO.getUsername());
-                applicationContext.publishEvent(new LogoutEvent(this, jwtToken, userDTO.getUsername(), userDTO.getId()));
-            } else if (principal != null) {
-                log.warn("当前用户主体不是UserDTO类型: {}，但仍将尝试使Token失效", principal.getClass().getName());
-            } else {
-                // principal 为 null 的情况，可能是Token已失效，或者SecurityContext中没有认证信息
-                // 这种情况通常意味着用户已经实际 登出，或者Token无效
-                log.warn("无法获取当前用户信息，Token可能已失效或无效，将尝试移除Token: {}", jwtToken);
-            }
-
-            boolean removed = jwtTokenRedisCacheProvider.removeToken(jwtToken);
-            if (removed) {
-                log.info("Token已成功从缓存中移除: {}", jwtToken);
-                return Response.success("登出成功");
-            } else {
-                // 这种情况可能是Token本身就不在缓存中（例如已经过期并被自动清理）
-                // 或者Redis操作失败。对于前者，也认为是登出成功。
-                log.warn("尝试从缓存中移除Token {} 失败或Token不存在", jwtToken);
-                // 即使移除失败（比如Redis连接问题），从用户角度看，也应该提示登出成功，
-                // 因为客户端的Token在下次请求时会被认为是无效的（如果后端有严格校验）。
-                // 但服务端需要记录这个异常情况。
-                return Response.success("登出成功（Token可能已失效或无法立即从缓存清除）");
-            }
-        } catch (Exception e) {
-            log.error("登出过程中发生异常: {}", e.getMessage(), e);
-            // 即使发生异常，也应该尝试让客户端认为登出成功，避免用户困惑
-            // 但服务端必须记录此错误以供排查
-            return Response.error(500, "登出操作异常，请稍后重试或联系管理员");
+        // 获取当前用户信息（可选，仅用于日志和事件）
+        Object principal = currentUserService.getCurrentUser();
+        String username = null;
+        String userId = null;
+        if (principal instanceof UserDTO) {
+            UserDTO userDTO = (UserDTO) principal;
+            username = userDTO.getUsername();
+            userId = userDTO.getId();
         }
+
+        // 发布登出事件（可选）
+        applicationContext.publishEvent(new LogoutEvent(this, jwtToken, username, userId));
+
+        // 移除Token
+        boolean removed = jwtTokenRedisCacheProvider.removeToken(jwtToken);
+        if (removed) {
+            log.info("Token已成功从缓存中移除: {}", jwtToken);
+        } else {
+            log.warn("尝试从缓存中移除Token {} 失败或Token不存在", jwtToken);
+        }
+        return Response.success("登出成功");
     }
 }
