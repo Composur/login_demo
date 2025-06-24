@@ -2,6 +2,7 @@ package com.example.web.controller;
 
 import com.example.common.Response;
 import com.example.common.annotation.WebLog;
+import com.example.security.token.RouteCacheProvider;
 import com.example.service.CurrentUserService;
 import com.example.service.SysPermissionService;
 import com.example.service.dto.UserDTO;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -24,6 +26,7 @@ import java.util.Set;
 public class SysPermissionController {
     private final SysPermissionService sysPermissionService;
     private final CurrentUserService currentUserService;
+    private final RouteCacheProvider routeCache;
 
 
     /**
@@ -69,10 +72,10 @@ public class SysPermissionController {
     public Response routes() {
         UserDTO user = currentUserService.getCurrentUser();
         //缓存
-        //Optional<List<VueMenuRouteVO>> routeCacheOptional = routeCache.getCache(user.getUserid());
-        //if (routeCacheOptional.isPresent()) {
-        //    return R.OK(routeCacheOptional.get());
-        //}
+        Optional<List<PermissionRoutesResp>> routeCacheOptional = routeCache.getRoutes(user.getId());
+        if (routeCacheOptional.isPresent()) {
+            return Response.success(routeCacheOptional.get());
+        }
         List<PermissionRoutesResp> menuRoute = null;
         if (user.isManger()) {
             Set<String> permissionIds = sysPermissionService.allPermissionIds();
@@ -80,7 +83,7 @@ public class SysPermissionController {
         } else {
             menuRoute = sysPermissionService.queryRouteByUserid(user.getId());
         }
-        //routeCache.putCache(user.getUserid(), menuRoute);
+        routeCache.cacheRoutes(user.getId(), menuRoute);
         return Response.success(menuRoute);
     }
 

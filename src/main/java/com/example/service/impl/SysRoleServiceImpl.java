@@ -17,7 +17,7 @@ import com.example.web.mapper.SysRoleTransfer;
 import com.example.web.req.SysRoleSaveReq;
 import com.example.web.resp.PageResult;
 import com.example.web.resp.SysRoleResp;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class SysRoleServiceImpl implements SysRoleService {
 
