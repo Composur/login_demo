@@ -1,5 +1,6 @@
 package com.example.dal.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,6 +30,7 @@ public class SysUserEntity extends BaseEntity {
     /**
      * 是否启用
      */
+    @TableField("is_enabled")
     private Integer isEnabled;
 
     /**
@@ -38,15 +40,18 @@ public class SysUserEntity extends BaseEntity {
     /**
      * 机构名称
      */
-    private String orgName;
+    //@TableField("org_name")
+    //private String orgName;
     /**
      * 机构code
      */
     //@Schema(description = "机构code")
-    private String orgCode;
+    //@TableField("org_code")
+    //private String orgCode;
     /**
      * 是否网点管理员
      */
+    @TableField("is_manage")
     private Integer isManage;
 
 

@@ -3,15 +3,13 @@ package com.example.service.impl;
 import com.example.common.enums.MenuType;
 import com.example.dal.entity.SysPermissionEntity;
 import com.example.dal.mapper.SysPermissionMapper;
-import com.example.dal.mapper.SysRolePermissionMapper;
 import com.example.service.SysPermissionService;
 import com.example.web.mapper.SysPermissionTransfer;
 import com.example.web.req.SysPermissionSaveReq;
 import com.example.web.resp.PermissionRoutesResp;
 import com.example.web.resp.SysUserMenuTreeResp;
 import com.example.web.resp.VueMenuRouteMeta;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -21,12 +19,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SysPermissionServiceImpl implements SysPermissionService {
-    @Autowired
-    private SysPermissionMapper sysPermissionMapper;
 
-    private final SysRolePermissionMapper sysRolePermissionMapper;
+    private final SysPermissionMapper sysPermissionMapper;
+
 
     /**
      * 获取所有权限编码

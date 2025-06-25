@@ -10,14 +10,14 @@ import com.example.web.req.SysRolePageReq;
 import com.example.web.req.SysRoleSaveReq;
 import com.example.web.resp.PageResult;
 import com.example.web.resp.SysRoleResp;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("sys/role")
 public class SysRoleController {
 

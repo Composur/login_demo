@@ -1,13 +1,13 @@
 package com.example.event;
 
 import com.example.security.token.UserCacheProvider;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class LogoutEventListener {
     private final UserCacheProvider userCacheProvider;

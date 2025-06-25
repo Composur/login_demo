@@ -7,11 +7,11 @@ import com.example.dal.entity.SysUserEntity;
 import com.example.service.SysUserService;
 import com.example.web.mapper.UserTransfer;
 import com.example.web.req.PwdRestReq;
-import com.example.web.req.UserQueryReq; // 新增导入
+import com.example.web.req.UserQueryReq;
 import com.example.web.req.UserSaveReq;
 import com.example.web.resp.PageResult;
 import com.example.web.resp.SysUserResp;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/sys/user")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SysUserController {
     private final SysUserService sysUserService;
 

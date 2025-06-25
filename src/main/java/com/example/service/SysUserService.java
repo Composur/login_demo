@@ -91,9 +91,7 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUserEntity> {
         }
 
 
-        // 4. 持久化更新到数据库 (审计字段将自动填充)
-        // sysUser.setModifiedBy(SecurityUtil.getCurrentUsername()); // 移除
-        // sysUser.setModified(LocalDateTime.now()); // 移除
+        // 4. 持久化更新到数据库
         boolean updated = this.updateById(sysUser); // ServiceImpl 的 updateById 方法
         if (!updated) {
             return Response.error("更新用户信息失败，可能没有数据被修改或用户不存在");
