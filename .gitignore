@@ -144,3 +144,4 @@ fabric.properties
 
 .cursor/
 docker/
+.vscode
