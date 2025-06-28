@@ -1,5 +1,6 @@
 package com.example.web.mapper;
 
+import com.example.dal.entity.SysConfigEntity;
 import com.example.service.dto.SysConfigDTO;
 import com.example.web.resp.PageResult;
 import com.example.web.resp.SysConfigPageResp;
@@ -11,6 +12,8 @@ import java.util.List;
 @Mapper
 public interface SysConfigTransfer {
     SysConfigTransfer INSTANCE = Mappers.getMapper(SysConfigTransfer.class);
+
+    SysConfigDTO toSysConfigDTO(SysConfigEntity sysConfigEntity);
 
     // 单个对象转换
     SysConfigPageResp toSysConfigPageResp(SysConfigDTO sysConfigDTO);

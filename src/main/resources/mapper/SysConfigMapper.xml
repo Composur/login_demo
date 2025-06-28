@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dal.mapper.SysConfigMapper">
+    <resultMap id="BaseResultMap" type="com.example.dal.entity.SysConfigEntity">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="created_by" property="createdBy" jdbcType="VARCHAR"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+        <result column="modified_by" property="modifiedBy" jdbcType="VARCHAR"/>
+        <result column="modified" property="modified" jdbcType="TIMESTAMP"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="code" property="code" jdbcType="VARCHAR"/>
+        <result column="value" property="value" jdbcType="VARCHAR"/>
+        <result column="memo" property="memo" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="queryConfigByPage" resultType="com.example.service.dto.SysConfigDTO">
+        select id, name from sys_org
+    </select>
+    <!-- 根据code查询配置 -->
+    <select id="selectConfigByCode" resultMap="BaseResultMap" parameterType="string">
+        SELECT
+            id, created_by, created, modified_by, modified, type, code, value, memo
+        FROM
+            sys_config
+        WHERE
+            code = #{code}
+        LIMIT 1
+    </select>
+    <!-- 分页查询所有配置（可根据需要加where条件） -->
+    <select id="selectConfigPage" resultMap="BaseResultMap">
+        SELECT
+            id, created_by, created, modified_by, modified, type, code, value, memo
+        FROM
+            sys_config
+        ORDER BY created DESC
+    </select>
+    <!-- 根据value模糊查询配置 -->
+    <select id="selectConfigByValueLike" resultMap="BaseResultMap" parameterType="string">
+        SELECT
+            id, created_by, created, modified_by, modified, type, code, value, memo
+        FROM
+            sys_config
+        WHERE
+            value LIKE CONCAT('%', #{value}, '%')
+        ORDER BY created DESC
+    </select>
+</mapper>
