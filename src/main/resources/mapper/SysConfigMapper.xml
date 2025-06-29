@@ -12,35 +12,36 @@
         <result column="value" property="value" jdbcType="VARCHAR"/>
         <result column="memo" property="memo" jdbcType="VARCHAR"/>
     </resultMap>
-    <select id="queryConfigByPage" resultType="com.example.service.dto.SysConfigDTO">
-        select id, name from sys_org
-    </select>
     <!-- 根据code查询配置 -->
     <select id="selectConfigByCode" resultMap="BaseResultMap" parameterType="string">
         SELECT
-            id, created_by, created, modified_by, modified, type, code, value, memo
+        id, created_by, created, modified_by, modified, type, code, value, memo
         FROM
-            sys_config
+        sys_config
         WHERE
-            code = #{code}
+        code = #{code}
         LIMIT 1
     </select>
     <!-- 分页查询所有配置（可根据需要加where条件） -->
     <select id="selectConfigPage" resultMap="BaseResultMap">
         SELECT
-            id, created_by, created, modified_by, modified, type, code, value, memo
+        id, created_by, created, modified_by, modified, type, code, value, memo
         FROM
-            sys_config
-        ORDER BY created DESC
-    </select>
-    <!-- 根据value模糊查询配置 -->
-    <select id="selectConfigByValueLike" resultMap="BaseResultMap" parameterType="string">
-        SELECT
-            id, created_by, created, modified_by, modified, type, code, value, memo
-        FROM
-            sys_config
-        WHERE
-            value LIKE CONCAT('%', #{value}, '%')
+        sys_config
+        <where>
+            <if test="req.code != null and req.code != ''">
+                AND code = #{req.code}
+            </if>
+            <!--            <if test="req.memo != null and req.memo != ''">-->
+            <!--                AND memo LIKE CONCAT('%', #{req.memo}, '%')-->
+            <!--            </if>-->
+            <if test="req.type != null">
+                AND type = #{req.type}
+            </if>
+            <!--            <if test="req.value != null and req.value != ''">-->
+            <!--                AND value LIKE CONCAT('%', #{req.value}, '%')-->
+            <!--            </if>-->
+        </where>
         ORDER BY created DESC
     </select>
 </mapper>

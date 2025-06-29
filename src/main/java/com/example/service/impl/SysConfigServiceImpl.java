@@ -1,5 +1,7 @@
 package com.example.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.dal.entity.SysConfigEntity;
 import com.example.dal.mapper.SysConfigMapper;
 import com.example.service.SysConfigService;
@@ -19,14 +21,13 @@ public class SysConfigServiceImpl implements SysConfigService {
 
     private final SysConfigMapper sysConfigMapper;
 
-    /**
-     * @param req
-     * @return
-     */
+
     @Override
     public PageResult<SysConfigDTO> queryConfigByPage(SysConfigPageReq req) {
-        List<SysConfigEntity> sysConfigEntities = sysConfigMapper.queryConfigByPage(req);
-        List<SysConfigDTO> sysConfigDTOS = sysConfigEntities.stream().map(SysConfigTransfer.INSTANCE::toSysConfigDTO).collect(Collectors.toList());
-        return null;
+        Page<SysConfigEntity> page = new Page<>(req.getCurrent(), req.getSize());
+        IPage<SysConfigEntity> sysConfigEntities = sysConfigMapper.selectConfigPage(page, req);
+        List<SysConfigDTO> sysConfigDTOS = sysConfigEntities.getRecords().stream().map(SysConfigTransfer.INSTANCE::toSysConfigDTO).collect(Collectors.toList());
+        PageResult<SysConfigDTO> respPage = new PageResult<>(sysConfigDTOS, sysConfigEntities.getTotal(), sysConfigEntities.getCurrent(), sysConfigEntities.getSize());
+        return respPage;
     }
 }
