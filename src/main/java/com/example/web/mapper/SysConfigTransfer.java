@@ -5,6 +5,8 @@ import com.example.service.dto.SysConfigDTO;
 import com.example.web.resp.PageResult;
 import com.example.web.resp.SysConfigPageResp;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
@@ -15,13 +17,16 @@ public interface SysConfigTransfer {
 
     SysConfigDTO toSysConfigDTO(SysConfigEntity sysConfigEntity);
 
-    // 单个对象转换
+    // 单个对象转换，typeName 由 type 决定
+    @Mappings({
+            @Mapping(target = "typeName", expression = "java(com.example.web.mapper.SysConfigTransfer.typeToName(sysConfigDTO.getType()))")
+    })
     SysConfigPageResp toSysConfigPageResp(SysConfigDTO sysConfigDTO);
 
     // 列表转换
     List<SysConfigPageResp> toRespList(List<SysConfigDTO> dtoList);
 
-    // 分页转换（推荐）
+    // 分页转换
     default PageResult<SysConfigPageResp> toRespPage(PageResult<SysConfigDTO> dtoPage) {
         if (dtoPage == null) {
             return null;
@@ -36,5 +41,18 @@ public interface SysConfigTransfer {
         respPage.setSize(dtoPage.getSize());
 
         return respPage;
+    }
+
+    // type转typeName的静态方法
+    static String typeToName(Integer type) {
+        if (type == null) return null;
+        switch (type) {
+            case 1:
+                return "系统配置";
+            case 2:
+                return "业务配置";
+            default:
+                return "未知";
+        }
     }
 }

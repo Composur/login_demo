@@ -3,6 +3,8 @@ package com.example.service.dto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 public class SysConfigDTO {
@@ -23,5 +25,10 @@ public class SysConfigDTO {
 
     // 备注信息
     private String memo;
+
+    private String createdBy;
+    private Date created;
+    private String modifiedBy;
+    private Date modified;
 }
 
