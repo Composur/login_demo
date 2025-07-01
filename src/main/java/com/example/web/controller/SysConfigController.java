@@ -18,10 +18,7 @@ public class SysConfigController {
     private final SysConfigService sysConfigService;
 
     /**
-     * 系统配置查询
-     *
-     * @param req 分页查询请求对象，包含查询参数和分页信息
-     * @return 返回查询结果的状态，"success"表示查询成功
+     * 查询系统配置列表
      */
     @GetMapping("/query/page")
     public Response<PageResult<SysConfigPageResp>> queryPage(SysConfigPageReq req) {

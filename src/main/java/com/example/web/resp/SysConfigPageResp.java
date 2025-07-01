@@ -1,6 +1,7 @@
 package com.example.web.resp;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
@@ -13,8 +14,14 @@ public class SysConfigPageResp {
     private String value;
     private String memo;
     private String createdBy;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date created;
+
     private String modifiedBy;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date modified;
+
     private String typeName;
 }
