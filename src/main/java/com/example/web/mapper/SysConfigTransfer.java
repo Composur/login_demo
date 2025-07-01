@@ -1,5 +1,6 @@
 package com.example.web.mapper;
 
+import com.example.common.enums.ConfigTypeEnum;
 import com.example.dal.entity.SysConfigEntity;
 import com.example.service.dto.SysConfigDTO;
 import com.example.web.resp.PageResult;
@@ -46,13 +47,6 @@ public interface SysConfigTransfer {
     // type转typeName的静态方法
     static String typeToName(Integer type) {
         if (type == null) return null;
-        switch (type) {
-            case 1:
-                return "系统配置";
-            case 2:
-                return "业务配置";
-            default:
-                return "未知";
-        }
+        return ConfigTypeEnum.getNameByCode(type);
     }
 }
