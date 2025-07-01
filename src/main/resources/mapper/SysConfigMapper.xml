@@ -29,18 +29,18 @@
         FROM
         sys_config
         <where>
-            <if test="req.code != null and req.code != ''">
+            <!-- <if test="req.code != null and req.code != ''">
                 AND code = #{req.code}
-            </if>
+            </if> -->
             <!--            <if test="req.memo != null and req.memo != ''">-->
             <!--                AND memo LIKE CONCAT('%', #{req.memo}, '%')-->
             <!--            </if>-->
-            <if test="req.type != null">
+            <if test="req.type != null and req.type != ''">
                 AND type = #{req.type}
             </if>
-            <!--            <if test="req.value != null and req.value != ''">-->
-            <!--                AND value LIKE CONCAT('%', #{req.value}, '%')-->
-            <!--            </if>-->
+            <if test="req.code != null and req.code != ''">
+                AND value LIKE CONCAT('%', #{req.code}, '%')
+            </if>
         </where>
         ORDER BY created DESC
     </select>
