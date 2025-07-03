@@ -45,4 +45,12 @@ public interface SysPermissionService {
     SysPermissionEntity updatePermission(String id, SysPermissionSaveReq req);
 
     int deleteById(String id);
+
+    /**
+     * 根据角色id查询用户id
+     *
+     * @param id 角色id
+     * @return 用户id列表
+     */
+    List<String> getUserIdsByRoleId(String id);
 }

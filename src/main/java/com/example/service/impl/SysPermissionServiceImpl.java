@@ -3,6 +3,7 @@ package com.example.service.impl;
 import com.example.common.enums.MenuType;
 import com.example.dal.entity.SysPermissionEntity;
 import com.example.dal.mapper.SysPermissionMapper;
+import com.example.dal.mapper.SysUserRoleMapper;
 import com.example.service.SysPermissionService;
 import com.example.web.mapper.SysPermissionTransfer;
 import com.example.web.req.SysPermissionSaveReq;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 public class SysPermissionServiceImpl implements SysPermissionService {
 
     private final SysPermissionMapper sysPermissionMapper;
+    private final SysUserRoleMapper sysUserRoleMapper;
 
 
     /**
@@ -180,6 +182,15 @@ public class SysPermissionServiceImpl implements SysPermissionService {
             return 1;
         }
         return 0;
+    }
+
+    /**
+     * @param id 角色id
+     * @return
+     */
+    @Override
+    public List<String> getUserIdsByRoleId(String id) {
+        return sysUserRoleMapper.getUserIdsByRoleId(id);
     }
 
 
