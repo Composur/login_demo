@@ -4,12 +4,14 @@ import com.example.common.Response;
 import com.example.service.SysConfigService;
 import com.example.service.dto.SysConfigDTO;
 import com.example.web.mapper.SysConfigTransfer;
+import com.example.web.req.SysConfigSaveReq;
 import com.example.web.resp.PageResult;
 import com.example.web.resp.SysConfigPageResp;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,5 +27,34 @@ public class SysConfigController {
         PageResult<SysConfigDTO> dtoPage = sysConfigService.queryConfigByPage(req);
         PageResult<SysConfigPageResp> respPage = SysConfigTransfer.INSTANCE.toRespPage(dtoPage);
         return Response.success(respPage);
+    }
+
+    /**
+     * 新增
+     */
+    @PostMapping("/save")
+    public Response<SysConfigDTO> save(@RequestBody @Valid SysConfigSaveReq req) {
+        SysConfigDTO sysConfigDTO = SysConfigTransfer.INSTANCE.toSysConfigDTO(req);
+        SysConfigDTO save = sysConfigService.save(sysConfigDTO);
+        return Response.success(save);
+    }
+
+    /**
+     * 新增
+     */
+    @PutMapping("/update/{id}")
+    public Response<SysConfigDTO> update(@PathVariable String id, @RequestBody @Valid SysConfigSaveReq req) {
+        SysConfigDTO sysConfigDTO = SysConfigTransfer.INSTANCE.toSysConfigDTO(req);
+        SysConfigDTO sysConfigDTONew = sysConfigService.update(id, sysConfigDTO);
+        return Response.success(sysConfigDTONew);
+    }
+
+    /**
+     * 批量删除
+     */
+    @DeleteMapping("/delete")
+    public Response<?> delete(@RequestBody Set<String> ids) {
+        sysConfigService.deleteByIds(ids);
+        return Response.success("删除成功");
     }
 }

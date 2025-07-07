@@ -3,6 +3,7 @@ package com.example.web.mapper;
 import com.example.common.enums.ConfigTypeEnum;
 import com.example.dal.entity.SysConfigEntity;
 import com.example.service.dto.SysConfigDTO;
+import com.example.web.req.SysConfigSaveReq;
 import com.example.web.resp.PageResult;
 import com.example.web.resp.SysConfigPageResp;
 import org.mapstruct.Mapper;
@@ -16,7 +17,12 @@ import java.util.List;
 public interface SysConfigTransfer {
     SysConfigTransfer INSTANCE = Mappers.getMapper(SysConfigTransfer.class);
 
+    SysConfigEntity toSysConfigEntity(SysConfigDTO sysConfigDTO);
+
     SysConfigDTO toSysConfigDTO(SysConfigEntity sysConfigEntity);
+
+    // req 转 DTO
+    SysConfigDTO toSysConfigDTO(SysConfigSaveReq req);
 
     // 单个对象转换，typeName 由 type 决定
     @Mappings({
