@@ -3,13 +3,11 @@ package com.example.dal.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.dal.entity.SysPermissionEntity;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.lang.Nullable;
 
 import java.util.List;
 
-@Mapper
 public interface SysPermissionMapper extends BaseMapper<SysPermissionEntity> {
     /**
      * 查询权限根据ID

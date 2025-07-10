@@ -5,12 +5,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.dal.entity.SysUserEntity;
 import com.example.web.req.PwdRestReq;
 import com.example.web.req.UserQueryReq;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Set;
 
-@Mapper
 public interface SysUserMapper extends BaseMapper<SysUserEntity> {
     /**
      * 根据用户id删除用户角色关系

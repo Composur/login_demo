@@ -4,12 +4,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.dal.entity.SysRoleEntity;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-@Mapper
 public interface SysRoleMapper extends BaseMapper<SysRoleEntity> {
 
     /**
@@ -33,7 +31,7 @@ public interface SysRoleMapper extends BaseMapper<SysRoleEntity> {
     default List<SysRoleEntity> selectAll(@Param("roleCodes") List<String> roleCodes) {
         return selectAll(roleCodes, null, null);
     }
-    
+
     /**
      * 分页查询角色列表
      *

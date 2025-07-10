@@ -2,7 +2,6 @@ package com.example.dal.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.dal.entity.SysRolePermissionEntity;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.List;
 /**
  * 角色权限
  */
-@Mapper
 public interface SysRolePermissionMapper extends BaseMapper<SysRolePermissionEntity> {
 
     /**
