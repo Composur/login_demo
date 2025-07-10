@@ -14,4 +14,8 @@ public interface SysConfigService {
     SysConfigDTO update(String id, SysConfigDTO sysConfigDTO);
 
     void deleteByIds(Set<String> ids);
+
+    void refreshCache(String configCode);
+    
+    void refreshAllCache();
 }

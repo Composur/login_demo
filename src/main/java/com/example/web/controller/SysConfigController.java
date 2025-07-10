@@ -40,7 +40,7 @@ public class SysConfigController {
     }
 
     /**
-     * 新增
+     * 更新
      */
     @PutMapping("/update/{id}")
     public Response<SysConfigDTO> update(@PathVariable String id, @RequestBody @Valid SysConfigSaveReq req) {
@@ -56,5 +56,23 @@ public class SysConfigController {
     public Response<?> delete(@RequestBody Set<String> ids) {
         sysConfigService.deleteByIds(ids);
         return Response.success("删除成功");
+    }
+
+    /**
+     * 刷新缓存
+     */
+    @PutMapping("/refresh/{id}")
+    public Response<?> refreshCache(@PathVariable String id) {
+        sysConfigService.refreshCache(id);
+        return Response.success("刷新成功");
+    }
+
+    /**
+     * 刷新全量缓存
+     */
+    @PostMapping("/refresh")
+    public Response<?> refreshCache() {
+        sysConfigService.refreshAllCache();
+        return Response.success("刷新成功");
     }
 }
