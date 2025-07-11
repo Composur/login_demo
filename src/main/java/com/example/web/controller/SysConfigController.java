@@ -8,6 +8,7 @@ import com.example.web.req.SysConfigSaveReq;
 import com.example.web.resp.PageResult;
 import com.example.web.resp.SysConfigPageResp;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,6 +24,7 @@ public class SysConfigController {
      * 查询系统配置列表
      */
     @GetMapping("/query/page")
+    @PreAuthorize("hasAuthority('sys:config:query')")
     public Response<PageResult<SysConfigPageResp>> queryPage(SysConfigPageReq req) {
         PageResult<SysConfigDTO> dtoPage = sysConfigService.queryConfigByPage(req);
         PageResult<SysConfigPageResp> respPage = SysConfigTransfer.INSTANCE.toRespPage(dtoPage);
@@ -43,6 +45,7 @@ public class SysConfigController {
      * 更新
      */
     @PutMapping("/update/{id}")
+    @PreAuthorize("hasAuthority('sys:config:update')")
     public Response<SysConfigDTO> update(@PathVariable String id, @RequestBody @Valid SysConfigSaveReq req) {
         SysConfigDTO sysConfigDTO = SysConfigTransfer.INSTANCE.toSysConfigDTO(req);
         SysConfigDTO sysConfigDTONew = sysConfigService.update(id, sysConfigDTO);
