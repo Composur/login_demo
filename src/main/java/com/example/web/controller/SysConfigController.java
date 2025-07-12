@@ -35,6 +35,7 @@ public class SysConfigController {
      * 新增
      */
     @PostMapping("/save")
+    @PreAuthorize("hasAuthority('sys:config:save')")
     public Response<SysConfigDTO> save(@RequestBody @Valid SysConfigSaveReq req) {
         SysConfigDTO sysConfigDTO = SysConfigTransfer.INSTANCE.toSysConfigDTO(req);
         SysConfigDTO save = sysConfigService.save(sysConfigDTO);
@@ -56,6 +57,7 @@ public class SysConfigController {
      * 批量删除
      */
     @DeleteMapping("/delete")
+    @PreAuthorize("hasAuthority('sys:config:delete')")
     public Response<?> delete(@RequestBody Set<String> ids) {
         sysConfigService.deleteByIds(ids);
         return Response.success("删除成功");

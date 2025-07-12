@@ -1,6 +1,7 @@
 package com.example.common;
 
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,6 +38,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateKeyException.class)
     public Response<?> handleDuplicateKey(DuplicateKeyException ex) {
         return Response.error("该数据已存在，不能重复提交");
+    }
+
+    /**
+     * 处理权限不足异常
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseBody
+    public Response<?> handleAccessDeniedException(AccessDeniedException ex) {
+        return Response.error(403, "权限不足，无法访问该资源");
     }
 
     @ExceptionHandler(Exception.class)
