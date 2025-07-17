@@ -18,11 +18,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SysRolePermissionServiceImpl extends ServiceImpl<SysRolePermissionMapper, SysRolePermissionEntity> implements SysRolePermissionService {
 
-    private SysRolePermissionMapper sysRolePermissionMapper;
+    private final SysRolePermissionMapper sysRolePermissionMapper;
 
-    private SysUserRoleMapper sysUserRoleMapper;
+    private final SysUserRoleMapper sysUserRoleMapper;
 
-    private RouteCacheProvider routeCache;
+    private final RouteCacheProvider routeCache;
 
     /**
      * 授权权限

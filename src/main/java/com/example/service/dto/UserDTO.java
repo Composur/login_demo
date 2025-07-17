@@ -42,7 +42,7 @@ public class UserDTO implements UserDetails {
             authorities.addAll(
                 roles.stream()
                     .filter(role -> role != null && !role.trim().isEmpty()) // 过滤空值
-                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                     .collect(Collectors.toList())
             );
         }
