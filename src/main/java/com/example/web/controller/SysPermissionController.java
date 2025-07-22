@@ -39,6 +39,11 @@ public class SysPermissionController {
     public Response save(@RequestBody SysPermissionSaveReq req) {
         // 这里可以添加保存逻辑
         sysPermissionService.savePermission(req);
+        // TODO 新增的时候同步权限到 sys_api_permission
+        // 方案一：权限管理页面支持接口信息录入
+        // 方案二：接口权限和菜单权限分开维护
+        // 方案三：后端自动扫描接口生成权限（适合大项目）
+
         return Response.success("保存成功");
     }
 
