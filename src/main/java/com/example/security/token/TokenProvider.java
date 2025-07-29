@@ -9,4 +9,6 @@ public interface TokenProvider {
     String createToken(UserDTO userDTO, LoginReq loginReq);
 
     boolean removeToken(String token);
+    
+    boolean existsToken(String token);
 }

@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.example.common.util.JwtUtil;
 import com.example.security.SecurityProperties;
 import com.example.security.handler.JwtAuthenticationEntryPoint;
+import com.example.security.token.JwtTokenRedisCacheProvider;
 import com.example.security.token.UserCacheProvider;
 import com.example.service.impl.UserDetailServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
     private final SecurityProperties securityProperties;
     private final UserCacheProvider userCacheProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtTokenRedisCacheProvider jwtTokenRedisCacheProvider;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -62,6 +64,11 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
         String username = JwtUtil.getUsername(jwtToken);
         if (username == null) {
             throw new AuthenticationCredentialsNotFoundException("无效的JWT令牌");
+        }
+
+        // 新增：校验Redis中是否存在该token
+        if (!jwtTokenRedisCacheProvider.existsToken(jwtToken)) {
+            throw new AuthenticationCredentialsNotFoundException("登录已失效，请重新登录");
         }
 
         // 2. 验证JWT令牌的签名和过期时间

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.dal.entity.SysRolePermissionEntity;
 import com.example.dal.mapper.SysRolePermissionMapper;
 import com.example.dal.mapper.SysUserRoleMapper;
+import com.example.security.token.JwtTokenRedisCacheProvider;
 import com.example.security.token.RouteCacheProvider;
 import com.example.service.SysRolePermissionService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,8 @@ public class SysRolePermissionServiceImpl extends ServiceImpl<SysRolePermissionM
     private final SysUserRoleMapper sysUserRoleMapper;
 
     private final RouteCacheProvider routeCache;
+
+    private final JwtTokenRedisCacheProvider jwtTokenRedisCacheProvider;
 
     /**
      * 授权权限
@@ -50,6 +53,8 @@ public class SysRolePermissionServiceImpl extends ServiceImpl<SysRolePermissionM
         // 2. 批量清理这些用户的缓存
         for (String userId : userIds) {
             routeCache.clearRoutes(userId);
+            // TODO 删除用户token
+            //jwtTokenRedisCacheProvider.removeToken(userId);
         }
         return this.saveBatch(rolePermissionEntities);
     }

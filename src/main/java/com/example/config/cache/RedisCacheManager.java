@@ -109,4 +109,11 @@ public class RedisCacheManager {
         String _key = normaliz(key);
         return Optional.ofNullable(this.redisTemplate.opsForValue().get(_key));
     }
+
+    /**
+     * 检查是否有 key
+     */
+    public boolean hasKey(String key) {
+        return this.redisTemplate.hasKey(normaliz(key));
+    }
 }

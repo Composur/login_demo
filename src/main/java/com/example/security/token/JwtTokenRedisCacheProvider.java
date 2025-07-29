@@ -25,6 +25,12 @@ public class JwtTokenRedisCacheProvider implements TokenProvider, CacheUtil {
 
 
     @Override
+    public boolean existsToken(String token) {
+        String cacheKey = getCacheKey(CacheKeyValue.online_user_cache, token);
+        return cache.hasKey(cacheKey);
+    }
+
+    @Override
     public String createToken(UserDTO userDTO) {
         return createToken(userDTO, null);
     }
