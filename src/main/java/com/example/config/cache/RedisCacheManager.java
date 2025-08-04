@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -115,5 +116,32 @@ public class RedisCacheManager {
      */
     public boolean hasKey(String key) {
         return this.redisTemplate.hasKey(normaliz(key));
+    }
+
+    /**
+     * 添加 set 元素
+     */
+    public void sadd(String key, String value) {
+        redisTemplate.opsForSet().add(normaliz(key), value);
+    }
+
+    /**
+     * 获取 set 元素
+     *
+     * @param key
+     * @return
+     */
+    public Set<String> smembers(String key) {
+        return redisTemplate.opsForSet().members(normaliz(key));
+    }
+
+    /**
+     * 设置缓存有效期
+     *
+     * @param key
+     * @param timeout
+     */
+    public void expire(String key, long timeout) {
+        redisTemplate.expire(normaliz(key), timeout, TimeUnit.SECONDS);
     }
 }
