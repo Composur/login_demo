@@ -13,6 +13,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
+
 @Component
 @RequiredArgsConstructor
 public class JwtTokenRedisCacheProvider implements TokenProvider, CacheUtil {
@@ -44,6 +46,13 @@ public class JwtTokenRedisCacheProvider implements TokenProvider, CacheUtil {
         String json = objectMapper.valueToTree(onlineUser).toString();
         String cacheKey = getCacheKey(CacheKeyValue.online_user_cache, token);
         cache.set(cacheKey, json, securityProperties.getJwt().getTokenValidity());
+        
+        // 新增：维护 userId -> token 的集合
+        String userTokensKey = getCacheKey(CacheKeyValue.user_tokens_cache, userDTO.getId());
+        cache.sadd(userTokensKey, token);
+        // 设置 user_tokens 的过期时间，和 token 一致
+        cache.expire(userTokensKey, securityProperties.getJwt().getTokenValidity());
+
         return token;
     }
 
@@ -52,11 +61,26 @@ public class JwtTokenRedisCacheProvider implements TokenProvider, CacheUtil {
         return cache.del(cacheKey);
     }
 
+    /**
+     * 获取用户token集合的缓存key
+     * @param userId 用户ID
+     * @return 缓存key
+     */
+    public String getUserTokensKey(String userId) {
+        return getCacheKey(CacheKeyValue.user_tokens_cache, userId);
+    }
+
+
+
     @Getter
     public enum CacheKeyValue implements KeyValue {
         online_user_cache(
                 "token",
                 "在线用户"
+        ),
+        user_tokens_cache(
+                "user_tokens",
+                "用户token集合"
         ),
         ;
         private final String prefix;

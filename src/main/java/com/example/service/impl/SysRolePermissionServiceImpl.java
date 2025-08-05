@@ -1,6 +1,7 @@
 package com.example.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.config.cache.RedisCacheManager;
 import com.example.dal.entity.SysRolePermissionEntity;
 import com.example.dal.mapper.SysRolePermissionMapper;
 import com.example.dal.mapper.SysUserRoleMapper;
@@ -8,15 +9,18 @@ import com.example.security.token.JwtTokenRedisCacheProvider;
 import com.example.security.token.RouteCacheProvider;
 import com.example.service.SysRolePermissionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SysRolePermissionServiceImpl extends ServiceImpl<SysRolePermissionMapper, SysRolePermissionEntity> implements SysRolePermissionService {
 
     private final SysRolePermissionMapper sysRolePermissionMapper;
@@ -26,6 +30,8 @@ public class SysRolePermissionServiceImpl extends ServiceImpl<SysRolePermissionM
     private final RouteCacheProvider routeCache;
 
     private final JwtTokenRedisCacheProvider jwtTokenRedisCacheProvider;
+
+    private final RedisCacheManager redisCache;
 
     /**
      * 授权权限
@@ -53,8 +59,19 @@ public class SysRolePermissionServiceImpl extends ServiceImpl<SysRolePermissionM
         // 2. 批量清理这些用户的缓存
         for (String userId : userIds) {
             routeCache.clearRoutes(userId);
-            // TODO 删除用户token
-            //jwtTokenRedisCacheProvider.removeToken(userId);
+            // 删除用户所有token，强制重新登录
+            String userTokensKey = jwtTokenRedisCacheProvider.getUserTokensKey(userId);
+            Set<String> tokens = redisCache.smembers(userTokensKey);
+            int removedCount = 0;
+            if (tokens != null && !tokens.isEmpty()) {
+                for (String token : tokens) {
+                    if (jwtTokenRedisCacheProvider.removeToken(token)) {
+                        removedCount++;
+                    }
+                }
+                redisCache.del(userTokensKey);
+            }
+            log.info("用户 {} 的 {} 个token已被删除，强制重新登录", userId, removedCount);
         }
         return this.saveBatch(rolePermissionEntities);
     }
