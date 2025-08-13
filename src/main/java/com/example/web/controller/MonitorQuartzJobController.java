@@ -1,13 +1,14 @@
 package com.example.web.controller;
 
 import com.example.common.Response;
+import com.example.service.MonitorQuartzJobService;
+import com.example.web.req.QuartzJobSaveReq;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.CronExpression;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,39 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/monitor/quartz/job")
-public class MonitorController {
+@RequiredArgsConstructor
+public class MonitorQuartzJobController {
+
+    private final MonitorQuartzJobService monitorQuartzJobService;
+
+    /**
+     * 保存定时任务
+     *
+     * @param req 定时任务保存请求
+     * @return 保存结果
+     */
+    @PostMapping("/save")
+    public Response<String> saveQuartzJob(@RequestBody @Valid QuartzJobSaveReq req) {
+        log.info("保存定时任务请求: {}", req);
+
+        try {
+            // 验证cron表达式
+            CronExpression cronExpression = new CronExpression(req.getCronExpression());
+
+            // 保存定时任务
+            String jobId = monitorQuartzJobService.save(req);
+
+            log.info("定时任务保存成功，ID: {}", jobId);
+            return Response.success(jobId);
+
+        } catch (ParseException e) {
+            log.error("cron表达式格式错误: {}, 错误信息: {}", req.getCronExpression(), e.getMessage());
+            return Response.error("cron表达式格式错误: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("保存定时任务异常: {}", e.getMessage(), e);
+            return Response.error("保存定时任务失败: " + e.getMessage());
+        }
+    }
 
     /**
      * 检查cron表达式是否有效
