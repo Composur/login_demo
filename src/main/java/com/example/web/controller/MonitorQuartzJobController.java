@@ -2,7 +2,12 @@ package com.example.web.controller;
 
 import com.example.common.Response;
 import com.example.service.MonitorQuartzJobService;
+import com.example.service.dto.QuartzJobDTO;
+import com.example.web.mapper.QuartzJobTransfer;
+import com.example.web.req.QuartzJobQueryPageReq;
 import com.example.web.req.QuartzJobSaveReq;
+import com.example.web.resp.PageResult;
+import com.example.web.resp.QuartzJobQueryPageResp;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.CronExpression;
@@ -48,6 +53,15 @@ public class MonitorQuartzJobController {
             log.error("保存定时任务异常: {}", e.getMessage(), e);
             return Response.error("保存定时任务失败: " + e.getMessage());
         }
+    }
+
+    // 列表查询
+    @GetMapping("/query/page")
+    public Response<PageResult<QuartzJobQueryPageResp>> queryPage(QuartzJobQueryPageReq req) {
+        log.info("分页查询定时任务: {}", req);
+        PageResult<QuartzJobDTO> dtoPage = monitorQuartzJobService.queryPage(req);
+        PageResult<QuartzJobQueryPageResp> respPage = QuartzJobTransfer.INSTANCE.toRespPage(dtoPage);
+        return Response.success(respPage);
     }
 
     /**
