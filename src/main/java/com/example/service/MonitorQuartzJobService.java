@@ -25,4 +25,6 @@ public interface MonitorQuartzJobService {
      * @return 分页结果
      */
     PageResult<QuartzJobDTO> queryPage(QuartzJobQueryPageReq req);
-} 
+
+    PageResult<QuartzJobDTO> queryPage2(QuartzJobQueryPageReq req);
+}

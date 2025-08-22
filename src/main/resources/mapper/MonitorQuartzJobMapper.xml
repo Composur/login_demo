@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dal.mapper.MonitorQuartzJobMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.dal.entity.QuartzJobEntity">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="created_by" property="createdBy" jdbcType="VARCHAR"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+        <result column="modified_by" property="modifiedBy" jdbcType="VARCHAR"/>
+        <result column="modified" property="modified" jdbcType="TIMESTAMP"/>
+        <result column="job_class_name" property="jobClassName" jdbcType="VARCHAR"/>
+        <result column="parameter" property="parameter" jdbcType="VARCHAR"/>
+        <result column="cron_expression" property="cronExpression" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 自定义SQL分页查询定时任务 -->
+    <select id="selectQuartzJobPage" resultMap="BaseResultMap">
+        SELECT
+        id, created_by, created, modified_by, modified,
+        job_class_name, parameter, cron_expression, status, description
+        FROM sys_quartz_job
+        <where>
+            <if test="req.jobClassName != null and req.jobClassName != ''">
+                AND (
+                job_class_name LIKE CONCAT('%', #{req.jobClassName}, '%')
+                OR description LIKE CONCAT('%', #{req.jobClassName}, '%')
+                )
+            </if>
+            <if test="req.status != null">
+                AND status = #{req.status}
+            </if>
+        </where>
+        ORDER BY created DESC
+    </select>
+
+</mapper>

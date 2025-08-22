@@ -49,7 +49,7 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
     }
 
     @Override
-    public PageResult<QuartzJobDTO> queryPage(QuartzJobQueryPageReq req) {
+    public PageResult<QuartzJobDTO> queryPage2(QuartzJobQueryPageReq req) {
         Page<QuartzJobEntity> page = new Page<>(req.getCurrent(), req.getSize());
         LambdaQueryWrapper<QuartzJobEntity> wrapper = new LambdaQueryWrapper<>();
 
@@ -64,16 +64,33 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
         }
 
         IPage<QuartzJobEntity> resultPage = monitorQuartzJobMapper.selectPage(page, wrapper);
-        
+
         List<QuartzJobDTO> dtoList = resultPage.getRecords().stream()
                 .map(QuartzJobTransfer.INSTANCE::toQuartzJobDTO)
                 .collect(Collectors.toList());
-                
+
         return new PageResult<>(
                 dtoList,
                 resultPage.getTotal(),
                 resultPage.getCurrent(),
                 resultPage.getSize()
         );
+    }
+
+    @Override
+    public PageResult<QuartzJobDTO> queryPage(QuartzJobQueryPageReq req) {
+        Page<QuartzJobEntity> page = new Page<>(req.getCurrent(), req.getSize());
+        IPage<QuartzJobEntity> quartzJobEntityIPage = monitorQuartzJobMapper.selectQuartzJobPage(page, req);
+        List<QuartzJobDTO> quartzJobDTOS = quartzJobEntityIPage.getRecords()
+                .stream()
+                .map(quartzJobEntity -> QuartzJobTransfer.INSTANCE.toQuartzJobDTO(quartzJobEntity))
+                .collect(Collectors.toList());
+        PageResult<QuartzJobDTO> respPage = new PageResult<>(
+                quartzJobDTOS,
+                quartzJobEntityIPage.getTotal(),
+                quartzJobEntityIPage.getCurrent(),
+                quartzJobEntityIPage.getSize()
+        );
+        return respPage;
     }
 } 
