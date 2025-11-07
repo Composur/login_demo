@@ -37,6 +37,11 @@ public class MonitorQuartzJobController {
         log.info("保存定时任务请求: {}", req);
 
         try {
+            // 新增时验证：id 必须为空（新增时ID由系统自动生成）
+            if (req.getId() != null && !req.getId().trim().isEmpty()) {
+                return Response.error("新增定时任务时不能传入ID，ID将由系统自动生成");
+            }
+
             // 验证cron表达式
             CronExpression cronExpression = new CronExpression(req.getCronExpression());
 
@@ -52,6 +57,43 @@ public class MonitorQuartzJobController {
         } catch (Exception e) {
             log.error("保存定时任务异常: {}", e.getMessage(), e);
             return Response.error("保存定时任务失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 更新定时任务
+     *
+     * @param req 定时任务保存请求（需包含id）
+     * @return 更新结果
+     */
+    @PutMapping("/update/{id}")
+    public Response<String> updateQuartzJob(@PathVariable String id, @RequestBody @Valid QuartzJobSaveReq req) {
+        log.info("更新定时任务请求: {}", req);
+
+        try {
+            // 验证ID是否存在
+            if (id == null || id.trim().isEmpty()) {
+                return Response.error("更新定时任务时ID不能为空");
+            }
+
+            // 验证cron表达式
+            CronExpression cronExpression = new CronExpression(req.getCronExpression());
+
+            // 更新定时任务
+            String jobId = monitorQuartzJobService.update(req);
+
+            log.info("定时任务更新成功，ID: {}", jobId);
+            return Response.success(jobId);
+
+        } catch (ParseException e) {
+            log.error("cron表达式格式错误: {}, 错误信息: {}", req.getCronExpression(), e.getMessage());
+            return Response.error("cron表达式格式错误: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.error("更新定时任务参数错误: {}", e.getMessage());
+            return Response.error(e.getMessage());
+        } catch (Exception e) {
+            log.error("更新定时任务异常: {}", e.getMessage(), e);
+            return Response.error("更新定时任务失败: " + e.getMessage());
         }
     }
 

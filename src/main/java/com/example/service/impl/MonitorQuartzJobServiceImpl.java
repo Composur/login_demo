@@ -49,6 +49,37 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
     }
 
     @Override
+    public String update(QuartzJobSaveReq req) {
+        log.info("更新定时任务: {}", req);
+
+        // 验证ID是否存在
+        if (req.getId() == null || req.getId().trim().isEmpty()) {
+            throw new IllegalArgumentException("更新定时任务时ID不能为空");
+        }
+
+        // 查询记录是否存在
+        QuartzJobEntity existingEntity = monitorQuartzJobMapper.selectById(req.getId());
+        if (existingEntity == null) {
+            throw new IllegalArgumentException("定时任务不存在，ID: " + req.getId());
+        }
+
+        // 更新实体对象
+        QuartzJobEntity entity = new QuartzJobEntity();
+        entity.setId(req.getId());
+        entity.setStatus(req.getStatus());
+        entity.setJobClassName(req.getJobClassName());
+        entity.setCronExpression(req.getCronExpression());
+        entity.setParameter(req.getParameter());
+        entity.setDescription(req.getDescription());
+
+        // 更新到数据库
+        monitorQuartzJobMapper.updateById(entity);
+
+        log.info("定时任务更新成功，ID: {}", entity.getId());
+        return entity.getId();
+    }
+
+    @Override
     public PageResult<QuartzJobDTO> queryPage2(QuartzJobQueryPageReq req) {
         Page<QuartzJobEntity> page = new Page<>(req.getCurrent(), req.getSize());
         LambdaQueryWrapper<QuartzJobEntity> wrapper = new LambdaQueryWrapper<>();

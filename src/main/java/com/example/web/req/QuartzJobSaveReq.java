@@ -9,6 +9,11 @@ import javax.validation.constraints.NotNull;
 public class QuartzJobSaveReq {
 
     /**
+     * ID（新增时为空，更新时必填）
+     */
+    private String id;
+
+    /**
      * 状态 1正常 0停止
      */
     @NotNull(message = "状态不能为空")
