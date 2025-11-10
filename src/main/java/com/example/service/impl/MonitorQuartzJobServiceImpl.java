@@ -124,4 +124,21 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
         );
         return respPage;
     }
+
+    @Override
+    public void delete(String id) {
+        log.info("删除定时任务，ID: {}", id);
+
+        if (!StringUtils.hasText(id)) {
+            throw new IllegalArgumentException("删除定时任务时ID不能为空");
+        }
+
+        QuartzJobEntity existingEntity = monitorQuartzJobMapper.selectById(id);
+        if (existingEntity == null) {
+            throw new IllegalArgumentException("定时任务不存在，ID: " + id);
+        }
+
+        monitorQuartzJobMapper.deleteById(id);
+        log.info("定时任务删除成功，ID: {}", id);
+    }
 } 

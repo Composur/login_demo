@@ -196,4 +196,31 @@ public class MonitorQuartzJobController {
 
         return Response.success(help);
     }
+
+    /**
+     * 删除定时任务
+     *
+     * @param id 定时任务ID
+     * @return 删除结果
+     */
+    @DeleteMapping("/delete")
+    public Response<String> deleteQuartzJob(@RequestParam("id") String id) {
+        log.info("删除定时任务请求，ID: {}", id);
+
+        try {
+            if (id == null || id.trim().isEmpty()) {
+                return Response.error("删除定时任务时ID不能为空");
+            }
+
+            monitorQuartzJobService.delete(id);
+            log.info("定时任务删除成功，ID: {}", id);
+            return Response.success("删除定时任务成功");
+        } catch (IllegalArgumentException e) {
+            log.error("删除定时任务参数错误: {}", e.getMessage());
+            return Response.error(e.getMessage());
+        } catch (Exception e) {
+            log.error("删除定时任务异常: {}", e.getMessage(), e);
+            return Response.error("删除定时任务失败: " + e.getMessage());
+        }
+    }
 }

@@ -35,4 +35,11 @@ public interface MonitorQuartzJobService {
     PageResult<QuartzJobDTO> queryPage(QuartzJobQueryPageReq req);
 
     PageResult<QuartzJobDTO> queryPage2(QuartzJobQueryPageReq req);
+
+    /**
+     * 根据ID删除定时任务
+     *
+     * @param id 定时任务ID
+     */
+    void delete(String id);
 }
