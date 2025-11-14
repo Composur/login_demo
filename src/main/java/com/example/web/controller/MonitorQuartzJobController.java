@@ -100,7 +100,7 @@ public class MonitorQuartzJobController {
     /**
      * 立即执行任务
      */
-    @PostMapping("/execute/{id}")
+    @PutMapping("/execute/{id}")
     public Response<String> executeQuartzJob(@PathVariable String id) {
         log.info("立即执行定时任务: {}", id);
         // 验证ID是否存在
