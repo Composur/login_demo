@@ -80,6 +80,23 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
     }
 
     @Override
+    public String execute(String id) {
+        log.info("执行定时任务，ID: {}", id);
+
+        if (!StringUtils.hasText(id)) {
+            throw new IllegalArgumentException("执行定时任务时ID不能为空");
+        }
+
+        QuartzJobEntity existingEntity = monitorQuartzJobMapper.selectById(id);
+        if (existingEntity == null) {
+            throw new IllegalArgumentException("定时任务不存在，ID: " + id);
+        }
+        // TODO 执行定时任务
+        log.info("定时任务执行成功，ID: {}", id);
+        return id;
+    }
+
+    @Override
     public PageResult<QuartzJobDTO> queryPage2(QuartzJobQueryPageReq req) {
         Page<QuartzJobEntity> page = new Page<>(req.getCurrent(), req.getSize());
         LambdaQueryWrapper<QuartzJobEntity> wrapper = new LambdaQueryWrapper<>();

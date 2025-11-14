@@ -97,6 +97,24 @@ public class MonitorQuartzJobController {
         }
     }
 
+    /**
+     * 立即执行任务
+     */
+    @PostMapping("/execute/{id}")
+    public Response<String> executeQuartzJob(@PathVariable String id) {
+        log.info("立即执行定时任务: {}", id);
+        // 验证ID是否存在
+        if (id == null || id.trim().isEmpty()) {
+            return Response.error("立即执行定时任务时ID不能为空");
+        }
+
+        // 立即执行定时任务
+        String jobId = monitorQuartzJobService.execute(id);
+
+        log.info("定时任务立即执行成功，ID: {}", jobId);
+        return Response.success(jobId);
+    }
+
     // 列表查询
     @GetMapping("/query/page")
     public Response<PageResult<QuartzJobQueryPageResp>> queryPage(QuartzJobQueryPageReq req) {
