@@ -97,6 +97,22 @@ public class MonitorQuartzJobController {
         }
     }
 
+    // 启动
+    @PutMapping("/resume/{id}")
+    public Response<String> resumeQuartzJob(@PathVariable String id) {
+        log.info("启动定时任务: {}", id);
+        // 验证ID是否存在
+        if (id == null || id.trim().isEmpty()) {
+            return Response.error("启动定时任务时ID不能为空");
+        }
+
+        // 启动定时任务
+        String jobId = monitorQuartzJobService.resume(id);
+
+        log.info("定时任务启动成功，ID: {}", jobId);
+        return Response.success(jobId);
+    }
+
     /**
      * 立即执行任务
      */

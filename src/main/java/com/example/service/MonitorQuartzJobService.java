@@ -27,6 +27,14 @@ public interface MonitorQuartzJobService {
     String update(QuartzJobSaveReq req);
 
     /**
+     * 启动定时任务
+     *
+     * @param id 定时任务ID
+     * @return 结果
+     */
+    String resume(String id);
+
+    /**
      * 立即执行定时任务
      *
      * @param id 定时任务ID

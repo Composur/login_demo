@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.dal.entity.QuartzJobEntity;
 import com.example.dal.mapper.MonitorQuartzJobMapper;
+import com.example.schedule.QuartzManager;
 import com.example.service.MonitorQuartzJobService;
 import com.example.service.dto.QuartzJobDTO;
 import com.example.web.mapper.QuartzJobTransfer;
@@ -13,6 +14,7 @@ import com.example.web.req.QuartzJobSaveReq;
 import com.example.web.resp.PageResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -28,6 +30,10 @@ import java.util.stream.Collectors;
 public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
 
     private final MonitorQuartzJobMapper monitorQuartzJobMapper;
+
+    @Autowired
+    private QuartzManager quartzManager;
+
 
     @Override
     public String save(QuartzJobSaveReq req) {
@@ -80,8 +86,43 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
     }
 
     @Override
+    public String resume(String id) {
+        log.info("启动定时任务，ID: {}", id);
+
+        if (!StringUtils.hasText(id)) {
+            throw new IllegalArgumentException("启动定时任务时ID不能为空");
+        }
+
+        QuartzJobEntity existingEntity = monitorQuartzJobMapper.selectById(id);
+        if (existingEntity == null) {
+            throw new IllegalArgumentException("定时任务不存在，ID: " + id);
+        }
+
+        try {
+            String jobClassName = existingEntity.getJobClassName();
+            String cronExpression = existingEntity.getCronExpression();
+            String parameter = existingEntity.getParameter();
+
+            quartzManager.addJob(id, jobClassName, cronExpression, parameter);
+
+            // 更新数据库
+            QuartzJobEntity updateEntity = new QuartzJobEntity();
+            updateEntity.setId(id);
+            updateEntity.setStatus(1);
+            monitorQuartzJobMapper.updateById(updateEntity);
+
+            log.info("定时任务启动成功，ID: {}, 类名: {}, Cron: {}", id, jobClassName, cronExpression);
+        } catch (Exception e) {
+            log.error("启动定时任务失败，ID: {}", id, e);
+            throw new RuntimeException("启动定时任务失败: " + e.getMessage(), e);
+        }
+
+        return id;
+    }
+
+    @Override
     public String execute(String id) {
-        log.info("执行定时任务，ID: {}", id);
+        log.info("立即执行定时任务，ID: {}", id);
 
         if (!StringUtils.hasText(id)) {
             throw new IllegalArgumentException("执行定时任务时ID不能为空");
@@ -91,8 +132,20 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
         if (existingEntity == null) {
             throw new IllegalArgumentException("定时任务不存在，ID: " + id);
         }
-        // TODO 执行定时任务
-        log.info("定时任务执行成功，ID: {}", id);
+
+        try {
+            String jobClassName = existingEntity.getJobClassName();
+            String parameter = existingEntity.getParameter();
+            String description = existingEntity.getDescription();
+
+            quartzManager.executeOnce(id, jobClassName, parameter, description);
+
+            log.info("定时任务立即执行成功，ID: {}, 类名: {}", id, jobClassName);
+        } catch (Exception e) {
+            log.error("执行定时任务失败，ID: {}", id, e);
+            throw new RuntimeException("执行定时任务失败: " + e.getMessage(), e);
+        }
+
         return id;
     }
 
