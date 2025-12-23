@@ -1,9 +1,12 @@
 package com.example.schedule;
 
+import com.example.dal.entity.QuartzJobEntity;
+import lombok.RequiredArgsConstructor;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 @Component
 public class QuartzManager {
     @Autowired
@@ -11,10 +14,14 @@ public class QuartzManager {
 
     /**
      * 添加定时任务（带 cron 表达式）
+     * 构造并调度job
      */
-    public void addJob(String jobId, String jobClassName, String cron, String parameter) throws SchedulerException {
+    public void addJob(QuartzJobEntity quartzJob) throws SchedulerException {
         try {
-            JobKey jobKey = JobKey.jobKey(jobId);
+            JobKey jobKey = QuartzKeyUtil.jobKey(quartzJob.getId());
+            String jobClassName = quartzJob.getJobClassName();
+            String cron = quartzJob.getCronExpression();
+            String parameter = quartzJob.getParameter();
 
             if (scheduler.checkExists(jobKey)) {
                 scheduler.resumeJob(jobKey);
@@ -37,9 +44,11 @@ public class QuartzManager {
 
             scheduler.scheduleJob(jobDetail, trigger);
         } catch (ClassNotFoundException e) {
-            throw new SchedulerException("找不到任务类: " + jobClassName, e);
+            throw new SchedulerException("找不到任务类: " + quartzJob.getJobClassName(), e);
         }
     }
+
+
 
     /**
      * 立即执行一次任务（基于任务ID）

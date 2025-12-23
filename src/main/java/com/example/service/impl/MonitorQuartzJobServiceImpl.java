@@ -14,6 +14,7 @@ import com.example.web.req.QuartzJobSaveReq;
 import com.example.web.resp.PageResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -85,6 +86,26 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
         return entity.getId();
     }
 
+    public String start(String id) {
+        QuartzJobEntity quartzJob = this.getJobOrThrow(id);
+        if (quartzJob.getStatus() != null && quartzJob.getStatus() == 1) {
+            return "任务运行中，请勿重复操作";
+        }
+        try {
+            quartzManager.addJob(quartzJob);
+            quartzManager.getScheduler().start();
+            this.updateStatus(id, 1);
+        } catch (SchedulerException e) {
+            log.error("定时任务启动失败，ID: {}", id, e);
+            throw new RuntimeException();
+        }
+        return id;
+    }
+
+    public String pause(String id) {
+        return id;
+    }
+
     @Override
     public String resume(String id) {
         log.info("启动定时任务，ID: {}", id);
@@ -103,7 +124,7 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
             String cronExpression = existingEntity.getCronExpression();
             String parameter = existingEntity.getParameter();
 
-            quartzManager.addJob(id, jobClassName, cronExpression, parameter);
+            quartzManager.addJob(existingEntity);
 
             // 更新数据库
             QuartzJobEntity updateEntity = new QuartzJobEntity();
@@ -147,6 +168,18 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
         }
 
         return id;
+    }
+
+    @Override
+    public QuartzJobEntity getJobOrThrow(String id) {
+        return monitorQuartzJobMapper.selectById(id);
+    }
+
+    @Override
+    public void updateStatus(String id, Integer status) {
+        QuartzJobEntity job = this.getJobOrThrow(id);
+        job.setStatus(status);
+        monitorQuartzJobMapper.updateById(job);
     }
 
     @Override

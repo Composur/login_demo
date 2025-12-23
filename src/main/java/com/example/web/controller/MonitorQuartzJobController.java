@@ -97,7 +97,13 @@ public class MonitorQuartzJobController {
         }
     }
 
-    // 启动
+    //启动
+    @PostMapping("/start/{id}")
+    public Response<String> start(@PathVariable String id) {
+        return Response.success(monitorQuartzJobService.start(id));
+    }
+
+    // 恢复
     @PutMapping("/resume/{id}")
     public Response<String> resumeQuartzJob(@PathVariable String id) {
         log.info("启动定时任务: {}", id);

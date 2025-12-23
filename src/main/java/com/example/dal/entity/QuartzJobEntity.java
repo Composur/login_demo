@@ -31,7 +31,11 @@ public class QuartzJobEntity extends BaseEntity {
     private String cronExpression;
 
     /**
-     * 状态 1正常 0停止
+     * 任务状态
+     * 0=INIT（初始化）
+     * 1=RUNNING（运行中）
+     * 2=PAUSED（已暂停）
+     * 3=STOPPED（已停止）
      */
     private Integer status;
 

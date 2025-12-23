@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.dal.entity.QuartzJobEntity;
 import com.example.service.dto.QuartzJobDTO;
 import com.example.web.req.QuartzJobQueryPageReq;
 import com.example.web.req.QuartzJobSaveReq;
@@ -29,6 +30,22 @@ public interface MonitorQuartzJobService {
     /**
      * 启动定时任务
      *
+     * @param id
+     * @return
+     */
+    String start(String id);
+
+    /**
+     * 暂停定时任务
+     *
+     * @param id 定时任务ID
+     * @return 暂停结果
+     */
+    String pause(String id);
+
+    /**
+     * 恢复定时任务
+     *
      * @param id 定时任务ID
      * @return 结果
      */
@@ -41,6 +58,19 @@ public interface MonitorQuartzJobService {
      * @return 执行结果
      */
     String execute(String id);
+
+    /**
+     * 根据ID查询定时任务
+     *
+     * @param id 定时任务ID
+     * @return 定时任务
+     */
+    QuartzJobEntity getJobOrThrow(String id);
+
+    /**
+     * 修改定时任务状态
+     */
+    void updateStatus(String id, Integer status);
 
     /**
      * 分页查询定时任务
