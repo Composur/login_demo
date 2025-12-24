@@ -149,7 +149,7 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
             throw new IllegalArgumentException("执行定时任务时ID不能为空");
         }
 
-        QuartzJobEntity existingEntity = monitorQuartzJobMapper.selectById(id);
+        QuartzJobEntity existingEntity = getJobOrThrow(id);
         if (existingEntity == null) {
             throw new IllegalArgumentException("定时任务不存在，ID: " + id);
         }

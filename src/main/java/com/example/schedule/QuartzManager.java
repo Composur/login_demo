@@ -49,12 +49,11 @@ public class QuartzManager {
     }
 
 
-
     /**
      * 立即执行一次任务（基于任务ID）
      */
     public void executeOnce(String jobId, String jobClassName, String parameter, String description) throws SchedulerException {
-        JobKey jobKey = JobKey.jobKey(jobId);
+        JobKey jobKey = QuartzKeyUtil.jobKey(jobId);
         if (!scheduler.checkExists(jobKey)) {
             throw new SchedulerException("任务未启动，无法立即执行：" + jobId);
         }
