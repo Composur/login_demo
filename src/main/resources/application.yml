@@ -18,7 +18,8 @@ spring:
     suffix: .html
     encoding: UTF-8
     mode: HTML
-
+  quartz:
+    job-store-type: jdbc
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/*Mapper.xml
