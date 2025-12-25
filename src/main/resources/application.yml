@@ -19,7 +19,42 @@ spring:
     encoding: UTF-8
     mode: HTML
   quartz:
+    # 数据库存储
     job-store-type: jdbc
+    # Scheduler 名字。
+    #    scheduler-name: clusteredScheduler
+    # Quartz 是否自动启动
+    auto-startup: true
+    # 延迟 N 秒启动
+    startup-delay: 0
+    # 应用关闭时，是否等待定时任务执行完成
+    wait-for-jobs-to-complete-on-shutdown: true
+    # 启动时更新己存在的Job
+    overwrite-existing-jobs: true
+    # jdbc
+    jdbc:
+      # 初始化scheme
+      initialize-schema: never
+    # 添加 Quartz Scheduler 附加属性，更多可以看 http://www.quartz-scheduler.org/documentation/2.4.0-SNAPSHOT/configuration.html 文档
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: MyScheduler
+            instanceId: AUTO
+          jobStore:
+            # org.springframework.scheduling.quartz.ScheduleFactoryBean L575
+            class: org.springframework.scheduling.quartz.LocalDataSourceJobStore
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            tablePrefix: QRTZ_
+            isClustered: true
+            misfireThreshold: 60000
+            clusterCheckinInterval: 10000
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 10
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/*Mapper.xml
