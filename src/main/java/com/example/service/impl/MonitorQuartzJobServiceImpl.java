@@ -103,7 +103,19 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
     }
 
     public String pause(String id) {
-        return id;
+        QuartzJobEntity quartzJob = this.getJobOrThrow(id);
+        if (quartzJob.getStatus() != null && quartzJob.getStatus() == 0) {
+            return "任务已暂停，请勿重复操作";
+        }
+        try {
+            quartzManager.pauseJob(quartzJob);
+            this.updateStatus(id, 0);
+            log.info("定时任务暂停成功，ID: {}", id);
+            return id;
+        } catch (SchedulerException e) {
+            log.error("定时任务暂停失败，ID: {}", id, e);
+            throw new RuntimeException();
+        }
     }
 
     @Override

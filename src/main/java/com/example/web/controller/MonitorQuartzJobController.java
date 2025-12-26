@@ -103,6 +103,22 @@ public class MonitorQuartzJobController {
         return Response.success(monitorQuartzJobService.start(id));
     }
 
+    // 暂停
+    @PostMapping("/pause/{id}")
+    public Response<String> pauseQuartzJob(@PathVariable String id) {
+        log.info("暂停定时任务: {}", id);
+        // 验证ID是否存在
+        if (id == null || id.trim().isEmpty()) {
+            return Response.error("暂停定时任务时ID不能为空");
+        }
+
+        // 暂停定时任务
+        String jobId = monitorQuartzJobService.pause(id);
+
+        log.info("定时任务暂停成功，ID: {}", jobId);
+        return Response.success(jobId);
+    }
+
     // 恢复
     @PutMapping("/resume/{id}")
     public Response<String> resumeQuartzJob(@PathVariable String id) {

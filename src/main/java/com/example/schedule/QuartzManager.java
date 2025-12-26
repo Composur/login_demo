@@ -83,7 +83,15 @@ public class QuartzManager {
         scheduler.triggerJob(jobKey, dataMap);
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * 暂停任务（基于任务ID）
+     */
+    public void pauseJob(QuartzJobEntity quartzJob) throws SchedulerException {
+        String jobId = quartzJob.getId();
+        JobKey jobKey = QuartzKeyUtil.jobKey(jobId);
+        scheduler.pauseJob(jobKey);
+    }
+
     private Class<? extends Job> getJobClass(String jobClassName) throws ClassNotFoundException {
         return (Class<? extends Job>) Class.forName(jobClassName);
     }
