@@ -42,7 +42,9 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
 
         // 创建实体对象
         QuartzJobEntity entity = new QuartzJobEntity();
-        entity.setStatus(req.getStatus());
+        // TODO 新增不支持操作定时任务
+        //entity.setStatus(req.getStatus());
+        entity.setStatus(0);
         entity.setJobClassName(req.getJobClassName());
         entity.setCronExpression(req.getCronExpression());
         entity.setParameter(req.getParameter());
@@ -82,6 +84,23 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
         // 更新到数据库
         monitorQuartzJobMapper.updateById(entity);
 
+        // 同步状态到 Quartz
+        if (entity.getStatus() == 1) {
+            try {
+                quartzManager.addOrUpdateJob(entity);
+            } catch (SchedulerException e) {
+                log.error("定时任务更新失败，ID: {}", entity.getId(), e);
+                throw new RuntimeException("定时任务更新失败", e);
+            }
+        }
+        if (entity.getStatus() == 0) {
+            try {
+                quartzManager.pauseJob(entity);
+            } catch (SchedulerException e) {
+                log.error("定时任务更新失败，ID: {}", entity.getId(), e);
+                throw new RuntimeException("定时任务更新失败", e);
+            }
+        }
         log.info("定时任务更新成功，ID: {}", entity.getId());
         return entity.getId();
     }
@@ -92,12 +111,12 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
             return "任务运行中，请勿重复操作";
         }
         try {
-            quartzManager.addJob(quartzJob);
-            quartzManager.getScheduler().start();
+            quartzManager.addOrUpdateJob(quartzJob);
+            //quartzManager.getScheduler().start();
             this.updateStatus(id, 1);
         } catch (SchedulerException e) {
             log.error("定时任务启动失败，ID: {}", id, e);
-            throw new RuntimeException();
+            throw new RuntimeException("定时任务启动失败", e);
         }
         return id;
     }
@@ -120,36 +139,7 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
 
     @Override
     public String resume(String id) {
-        log.info("启动定时任务，ID: {}", id);
-
-        if (!StringUtils.hasText(id)) {
-            throw new IllegalArgumentException("启动定时任务时ID不能为空");
-        }
-
-        QuartzJobEntity existingEntity = monitorQuartzJobMapper.selectById(id);
-        if (existingEntity == null) {
-            throw new IllegalArgumentException("定时任务不存在，ID: " + id);
-        }
-
-        try {
-            String jobClassName = existingEntity.getJobClassName();
-            String cronExpression = existingEntity.getCronExpression();
-            String parameter = existingEntity.getParameter();
-
-            quartzManager.addJob(existingEntity);
-
-            // 更新数据库
-            QuartzJobEntity updateEntity = new QuartzJobEntity();
-            updateEntity.setId(id);
-            updateEntity.setStatus(1);
-            monitorQuartzJobMapper.updateById(updateEntity);
-
-            log.info("定时任务启动成功，ID: {}, 类名: {}, Cron: {}", id, jobClassName, cronExpression);
-        } catch (Exception e) {
-            log.error("启动定时任务失败，ID: {}", id, e);
-            throw new RuntimeException("启动定时任务失败: " + e.getMessage(), e);
-        }
-
+        this.start(id);
         return id;
     }
 

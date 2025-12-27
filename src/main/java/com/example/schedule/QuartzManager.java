@@ -4,56 +4,57 @@ import com.example.dal.entity.QuartzJobEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class QuartzManager {
-    @Autowired
-    private Scheduler scheduler;
+
+    private final Scheduler scheduler;
 
     /**
      * 添加定时任务（带 cron 表达式）
      * 构造并调度job
      */
-    public void addJob(QuartzJobEntity quartzJob) throws SchedulerException {
+    public void addOrUpdateJob(QuartzJobEntity quartzJob) throws SchedulerException {
         try {
             JobKey jobKey = QuartzKeyUtil.jobKey(quartzJob.getId());
             TriggerKey triggerKey = QuartzKeyUtil.triggerKey(quartzJob.getId());
 
             Class<? extends Job> jobClass = getJobClass(quartzJob.getJobClassName());
 
-            // 1️⃣ 如果 Job 不存在 → 创建 Job
-            if (!scheduler.checkExists(jobKey)) {
-                JobDetail jobDetail = JobBuilder.newJob(jobClass)
-                        .withIdentity(jobKey)
-                        .usingJobData("parameter", quartzJob.getParameter())
-                        .storeDurably()
-                        .requestRecovery()
-                        .build();
+            // 创建 Job
+            JobDetail jobDetail = JobBuilder.newJob(jobClass)
+                    .withIdentity(jobKey)
+                    .usingJobData("parameter", quartzJob.getParameter())
+                    .storeDurably()
+                    .requestRecovery()
+                    .build();
+            // 如果 Job 已存在，addJob(detail, true) 会替换旧的 JobDetail (更新参数/类名)
+            scheduler.addJob(jobDetail, true);
+            log.info("创建 JobDetail: {}", jobKey);
 
-                scheduler.addJob(jobDetail, false);
-                log.info("创建 JobDetail: {}", jobKey);
-            }
+            // 构建 Trigger
+            CronScheduleBuilder scheduleBuilder =
+                    CronScheduleBuilder.cronSchedule(quartzJob.getCronExpression())
+                            .withMisfireHandlingInstructionDoNothing();
 
-            // 2️⃣ 如果 Trigger 不存在 → 创建 Trigger（关键）
-            if (!scheduler.checkExists(triggerKey)) {
-                CronScheduleBuilder scheduleBuilder =
-                        CronScheduleBuilder.cronSchedule(quartzJob.getCronExpression());
-
-                Trigger trigger = TriggerBuilder.newTrigger()
-                        .withIdentity(triggerKey)
-                        .forJob(jobKey)
-                        .withSchedule(scheduleBuilder)
-                        .build();
-
+            Trigger trigger = TriggerBuilder.newTrigger()
+                    .withIdentity(triggerKey)
+                    .forJob(jobKey)
+                    .withSchedule(scheduleBuilder)
+                    .build();
+            if (scheduler.checkExists(triggerKey)) {
+                //    如果存在重新调度
+                scheduler.rescheduleJob(triggerKey, trigger);
+                log.info("重新调度 Trigger: {}", triggerKey);
+            } else {
                 scheduler.scheduleJob(trigger);
                 log.info("创建 Trigger: {}", triggerKey);
             }
 
-            // 3️⃣ 确保任务是启动状态
+            // 确保任务不是暂停状态
             scheduler.resumeJob(jobKey);
 
         } catch (ClassNotFoundException e) {
@@ -94,9 +95,5 @@ public class QuartzManager {
 
     private Class<? extends Job> getJobClass(String jobClassName) throws ClassNotFoundException {
         return (Class<? extends Job>) Class.forName(jobClassName);
-    }
-
-    public Scheduler getScheduler() {
-        return scheduler;
     }
 }
