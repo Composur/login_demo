@@ -85,6 +85,7 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
         monitorQuartzJobMapper.updateById(entity);
 
         // 同步状态到 Quartz
+        // 启动任务
         if (entity.getStatus() == 1) {
             try {
                 quartzManager.addOrUpdateJob(entity);
@@ -93,6 +94,7 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
                 throw new RuntimeException("定时任务更新失败", e);
             }
         }
+        // 暂停任务
         if (entity.getStatus() == 0) {
             try {
                 quartzManager.pauseJob(entity);
@@ -238,12 +240,19 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
             throw new IllegalArgumentException("删除定时任务时ID不能为空");
         }
 
-        QuartzJobEntity existingEntity = monitorQuartzJobMapper.selectById(id);
+        QuartzJobEntity existingEntity = getJobOrThrow(id);
         if (existingEntity == null) {
             throw new IllegalArgumentException("定时任务不存在，ID: " + id);
         }
-
+        // DB
         monitorQuartzJobMapper.deleteById(id);
+        // Quartz
+        try {
+            quartzManager.deleteJob(id);
+        } catch (SchedulerException e) {
+            log.error("定时任务删除失败，ID: {}", id, e);
+            throw new RuntimeException("定时任务删除失败: " + e.getMessage(), e);
+        }
         log.info("定时任务删除成功，ID: {}", id);
     }
 } 

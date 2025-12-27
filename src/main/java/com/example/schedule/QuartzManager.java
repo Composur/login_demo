@@ -85,6 +85,14 @@ public class QuartzManager {
     }
 
     /**
+     * 删除任务（基于任务ID）
+     */
+    public void deleteJob(String jobId) throws SchedulerException {
+        JobKey jobKey = QuartzKeyUtil.jobKey(jobId);
+        scheduler.deleteJob(jobKey);
+    }
+
+    /**
      * 暂停任务（基于任务ID）
      */
     public void pauseJob(QuartzJobEntity quartzJob) throws SchedulerException {
