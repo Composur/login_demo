@@ -152,20 +152,15 @@ public class MonitorQuartzJobServiceImpl implements MonitorQuartzJobService {
         if (!StringUtils.hasText(id)) {
             throw new IllegalArgumentException("执行定时任务时ID不能为空");
         }
-
-        QuartzJobEntity existingEntity = getJobOrThrow(id);
-        if (existingEntity == null) {
+        QuartzJobEntity job = getJobOrThrow(id);
+        if (job == null) {
             throw new IllegalArgumentException("定时任务不存在，ID: " + id);
         }
 
         try {
-            String jobClassName = existingEntity.getJobClassName();
-            String parameter = existingEntity.getParameter();
-            String description = existingEntity.getDescription();
+            quartzManager.executeOnce(job);
 
-            quartzManager.executeOnce(id, jobClassName, parameter, description);
-
-            log.info("定时任务立即执行成功，ID: {}, 类名: {}", id, jobClassName);
+            log.info("定时任务立即执行成功，ID: {}, 类名: {}", id, job.getJobClassName());
         } catch (Exception e) {
             log.error("执行定时任务失败，ID: {}", id, e);
             throw new RuntimeException("执行定时任务失败: " + e.getMessage(), e);

@@ -66,22 +66,34 @@ public class QuartzManager {
     /**
      * 立即执行一次任务（基于任务ID）
      */
-    public void executeOnce(String jobId, String jobClassName, String parameter, String description) throws SchedulerException {
-        log.info("立即执行定时任务: {}", scheduler.getMetaData().getJobStoreClass());
-        log.info("JobStore = {}",
-                scheduler.getMetaData().getJobStoreClass().getName());
-        JobKey jobKey = QuartzKeyUtil.jobKey(jobId);
+    public void executeOnce(QuartzJobEntity quartzJob) throws SchedulerException, ClassNotFoundException {
+        log.info("立即准备执行定时任务: {}", scheduler.getMetaData().getJobStoreClass());
+        //log.info("JobStore = {}",
+        //        scheduler.getMetaData().getJobStoreClass().getName());
+        JobKey jobKey = QuartzKeyUtil.jobKey(quartzJob.getId());
         if (!scheduler.checkExists(jobKey)) {
-            throw new SchedulerException("任务未启动，无法立即执行：" + jobId);
+            log.info("定时任务不存在，ID: {}", quartzJob.getId());
+            // 创建 Job
+            Class<? extends Job> jobClass = getJobClass(quartzJob.getJobClassName());
+            JobDetail jobDetail = JobBuilder.newJob(jobClass)
+                    .withIdentity(jobKey)
+                    .usingJobData("parameter", quartzJob.getParameter())
+                    .storeDurably()
+                    //.requestRecovery()
+                    .build();
+            // 如果 Job 已存在，addJob(detail, true) 会替换旧的 JobDetail (更新参数/类名)
+            scheduler.addJob(jobDetail, true);
+            log.info("创建 JobDetail: {}", jobKey);
         }
 
         JobDataMap dataMap = new JobDataMap();
-        if (parameter != null) {
-            dataMap.put("parameter", parameter);
+        if (quartzJob.getParameter() != null) {
+            dataMap.put("parameter", quartzJob.getParameter());
         }
 
         // 立即触发执行
         scheduler.triggerJob(jobKey, dataMap);
+        log.info("立即触发执行定时任务: {}", jobKey);
     }
 
     /**
